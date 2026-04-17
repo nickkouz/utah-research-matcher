@@ -1,0 +1,114 @@
+:root {
+  --bg: #f7f1e8;
+  --panel: rgba(255, 255, 255, 0.78);
+  --ink: #1f2a1f;
+  --accent: #0f766e;
+  --accent-2: #b45309;
+  --line: rgba(31, 42, 31, 0.12);
+  --shadow: 0 22px 60px rgba(77, 61, 28, 0.12);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  color: var(--ink);
+  background:
+    radial-gradient(circle at top left, rgba(180, 83, 9, 0.14), transparent 32%),
+    radial-gradient(circle at top right, rgba(15, 118, 110, 0.18), transparent 28%),
+    linear-gradient(180deg, #fcfaf6 0%, var(--bg) 100%);
+}
+
+.shell {
+  width: min(1120px, calc(100% - 2rem));
+  margin: 0 auto;
+  padding: 2rem 0 4rem;
+}
+
+.hero,
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(10px);
+}
+
+.hero {
+  padding: 3rem;
+  min-height: 60vh;
+  display: grid;
+  align-content: center;
+}
+
+.panel {
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.eyebrow,
+.score {
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-2);
+  font-size: 0.8rem;
+}
+
+h1,
+h2,
+h3 {
+  font-weight: 600;
+  line-height: 1.1;
+}
+
+h1 {
+  font-size: clamp(2.8rem, 6vw, 5.3rem);
+  margin: 0.2rem 0 1rem;
+}
+
+.lede {
+  width: min(62ch, 100%);
+  font-size: 1.1rem;
+}
+
+.button {
+  display: inline-block;
+  width: fit-content;
+  padding: 0.85rem 1.2rem;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  text-decoration: none;
+}
+
+.section-header {
+  margin: 2rem 0 1rem;
+}
+
+.grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.faculty-card pre {
+  white-space: pre-wrap;
+  font-family: inherit;
+  line-height: 1.45;
+}
+
+.email-block {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: 640px) {
+  .hero {
+    padding: 2rem;
+    min-height: auto;
+  }
+}

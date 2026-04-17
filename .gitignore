@@ -1,0 +1,8 @@
+.venv/
+__pycache__/
+*.pyc
+.env
+data/scraped_faculty.json
+data/faculty_db.json
+*.log
+Thumbs.db

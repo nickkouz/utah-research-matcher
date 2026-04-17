@@ -1,0 +1,23 @@
+{
+  "name": "Maya Patel",
+  "email": "u1234567@utah.edu",
+  "major": "Computer Science",
+  "year": "Junior",
+  "courses": [
+    "CS 5350 Machine Learning",
+    "CS 5340 Natural Language Processing"
+  ],
+  "skills": [
+    "Python",
+    "PyTorch",
+    "scikit-learn"
+  ],
+  "interests_freetext": "I want to use machine learning and language models for healthcare and clinical text.",
+  "checkbox_areas": [
+    "Machine Learning",
+    "Healthcare",
+    "Natural Language Processing"
+  ],
+  "goal": "Research experience before applying to PhD programs",
+  "commitment_hours": 10
+}
