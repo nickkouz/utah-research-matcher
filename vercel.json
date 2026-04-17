@@ -1,4 +1,14 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "builds": [
+    { "src": "index.html", "use": "@vercel/static" },
+    { "src": "form/index.html", "use": "@vercel/static" },
+    { "src": "results/index.html", "use": "@vercel/static" },
+    { "src": "frontend/**", "use": "@vercel/static" },
+    { "src": "data/demo_results.json", "use": "@vercel/static" },
+    { "src": "api/index.py", "use": "@vercel/python" }
+  ],
   "rewrites": [
     { "source": "/api/match", "destination": "/api" }
   ]
