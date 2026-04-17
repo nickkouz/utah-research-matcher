@@ -1,0 +1,97 @@
+[
+  {
+    "id": "clinical_nlp_student",
+    "student": {
+      "name": "Avery Kim",
+      "email": "avery@example.com",
+      "major": "Computer Science",
+      "year": "Junior",
+      "courses": ["CS 5350 Machine Learning", "CS 5340 Natural Language Processing"],
+      "skills": ["Python", "PyTorch", "scikit-learn"],
+      "primary_interest_text": "I want to work on machine learning and language models for clinical text in healthcare.",
+      "application_areas": ["Healthcare"],
+      "methods": ["Machine Learning", "Natural Language Processing"],
+      "checkbox_areas": ["Healthcare", "Machine Learning", "Natural Language Processing"],
+      "reference_examples": "Final project on text classification for medical notes",
+      "goal": "Research experience before PhD applications",
+      "commitment_hours": 10
+    },
+    "acceptable_faculty_ids": ["marasovic_ana", "marino_kenneth"]
+  },
+  {
+    "id": "vision_robotics_student",
+    "student": {
+      "name": "Jordan Lee",
+      "email": "jordan@example.com",
+      "major": "Computer Science",
+      "year": "Sophomore",
+      "courses": ["CS 4300 Computer Vision"],
+      "skills": ["Python", "OpenCV"],
+      "primary_interest_text": "I want to work on computer vision for robotics and embodied systems.",
+      "application_areas": ["Robotics"],
+      "methods": ["Computer Vision", "Robotics"],
+      "checkbox_areas": ["Robotics", "Computer Vision"],
+      "reference_examples": "Robotics club perception project",
+      "goal": "Hands-on research in perception systems",
+      "commitment_hours": 8
+    },
+    "acceptable_faculty_ids": ["marino_kenneth", "al_halah_ziad", "jiang_yue"]
+  },
+  {
+    "id": "secure_ml_student",
+    "student": {
+      "name": "Priya Shah",
+      "email": "priya@example.com",
+      "major": "Computer Science",
+      "year": "Senior",
+      "courses": ["Machine Learning", "Computer Security"],
+      "skills": ["Python", "PyTorch"],
+      "primary_interest_text": "I want to study trustworthy machine learning and computer security.",
+      "application_areas": ["Social Good"],
+      "methods": ["Machine Learning", "Security"],
+      "checkbox_areas": ["Social Good", "Machine Learning", "Security"],
+      "reference_examples": "Project on adversarial robustness",
+      "goal": "Security-focused ML research",
+      "commitment_hours": 10
+    },
+    "acceptable_faculty_ids": ["tao_guanhong"]
+  },
+  {
+    "id": "architecture_student",
+    "student": {
+      "name": "Noah Walker",
+      "email": "noah@example.com",
+      "major": "Computer Engineering",
+      "year": "Junior",
+      "courses": ["Computer Architecture", "Parallel Computing"],
+      "skills": ["C++", "Python"],
+      "primary_interest_text": "I want to work on computer architecture and scalable machine learning systems.",
+      "application_areas": ["Scientific Computing"],
+      "methods": ["Systems", "Machine Learning"],
+      "checkbox_areas": ["Scientific Computing", "Systems", "Machine Learning"],
+      "reference_examples": "Course project on accelerator architectures",
+      "goal": "Research in high-performance computing systems",
+      "commitment_hours": 12
+    },
+    "acceptable_faculty_ids": ["balasubramonian_rajeev"]
+  },
+  {
+    "id": "hci_student",
+    "student": {
+      "name": "Mila Chen",
+      "email": "mila@example.com",
+      "major": "Computer Science",
+      "year": "Junior",
+      "courses": ["Human Computer Interaction", "Deep Learning"],
+      "skills": ["Python", "Figma"],
+      "primary_interest_text": "I want to work on human-computer interaction and vision-based user experiences.",
+      "application_areas": ["Accessibility"],
+      "methods": ["Human-Computer Interaction", "Computer Vision"],
+      "checkbox_areas": ["Accessibility", "Human-Computer Interaction", "Computer Vision"],
+      "reference_examples": "Interactive vision prototype for accessibility",
+      "goal": "User-centered AI research",
+      "commitment_hours": 8
+    },
+    "acceptable_faculty_ids": ["jiang_yue"]
+  }
+]

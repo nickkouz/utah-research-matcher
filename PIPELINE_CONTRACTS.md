@@ -1,11 +1,11 @@
 # Pipeline Contracts
 
-This file defines the stage-by-stage JSON contracts for the Utah Research Matcher pipeline. The goal is to let the pipeline owner and the staff-database owner work independently while preserving a stable integration surface.
+This file defines the canonical JSON contracts for the Utah Research Matcher pipeline. The goal is to let the faculty-dataset workflow and the student-matching workflow evolve independently while keeping a stable interface.
 
 ## Stage 0: Raw student input
 
 Input source:
-- frontend form submission
+- dashboard form submission
 
 Contract:
 
@@ -17,17 +17,22 @@ Contract:
   "year": "Junior",
   "courses": ["CS 5350 Machine Learning", "CS 5340 NLP"],
   "skills": ["Python", "PyTorch", "scikit-learn"],
-  "interests_freetext": "I want to use machine learning and language models for healthcare and clinical text.",
-  "checkbox_areas": ["Machine Learning", "Healthcare", "Natural Language Processing"],
+  "primary_interest_text": "I want to work on machine learning and language models for clinical text in healthcare.",
+  "interests_freetext": "I want to work on machine learning and language models for clinical text in healthcare.",
+  "application_areas": ["Healthcare"],
+  "methods": ["Machine Learning", "Natural Language Processing"],
+  "checkbox_areas": ["Healthcare", "Machine Learning", "Natural Language Processing"],
+  "reference_examples": "CS 5350 final project on clinical note classification",
   "goal": "Research experience before applying to PhD programs",
-  "commitment_hours": 10
+  "commitment_hours": 10,
+  "followup_answer": ""
 }
 ```
 
 Rules:
-- `courses`, `skills`, and `checkbox_areas` should always be arrays, even if empty.
-- `commitment_hours` should be numeric.
-- Missing or blank values may be passed through and handled during normalization.
+- `courses`, `skills`, `application_areas`, `methods`, and `checkbox_areas` should always be arrays when possible.
+- `followup_answer` is optional and only used after the system asks for one more detail.
+- Legacy clients may still send only `interests_freetext` and `checkbox_areas`; the normalizer must continue to support that.
 
 ## Stage 1: Normalized student profile
 
@@ -40,28 +45,60 @@ Contract:
 {
   "structured_facts": {
     "name": "Maya Patel",
+    "email": "u1234567@utah.edu",
     "major": "Computer Science",
     "year": "Junior",
     "courses": ["CS 5350 Machine Learning", "CS 5340 NLP"],
     "skills": ["Python", "PyTorch", "scikit-learn"],
     "time_commitment_hours": 10,
-    "checkbox_areas": ["Machine Learning", "Healthcare", "Natural Language Processing"]
+    "checkbox_areas": ["Healthcare", "Machine Learning", "Natural Language Processing"],
+    "application_areas": ["Healthcare"],
+    "methods": ["Machine Learning", "Natural Language Processing"],
+    "reference_examples": ["CS 5350 final project on clinical note classification"]
   },
-  "research_summary": "Undergraduate in Computer Science seeking research experience in machine learning and language models for healthcare and clinical text.",
-  "confidence": "high"
+  "research_summary": "Undergraduate in Computer Science seeking research experience in machine learning and language models for healthcare and clinical text. Methods of interest include Machine Learning and Natural Language Processing.",
+  "research_methods": ["Machine Learning", "Natural Language Processing"],
+  "application_domains": ["Healthcare"],
+  "interest_keywords": ["machine learning", "language models", "clinical text", "healthcare"],
+  "experience_signals": ["CS 5350 Machine Learning", "Python", "PyTorch"],
+  "confidence": "high",
+  "needs_followup": false,
+  "followup_question": ""
 }
 ```
 
 Rules:
-- `structured_facts` must contain cleaned factual fields only.
-- `research_summary` is the text used for embedding and matching.
+- `structured_facts` contains cleaned factual fields only.
+- `research_summary` is the primary embedding text for student retrieval.
+- `research_methods`, `application_domains`, and `interest_keywords` should be grounded in the student’s actual inputs or explicit selections.
 - `confidence` must be one of `high`, `medium`, or `low`.
-- No invented interests or inflated skill claims.
+- `needs_followup` and `followup_question` are required, even if `needs_followup` is false.
+
+## Stage 1b: Follow-up response
+
+Producer:
+- `pipeline/orchestrator.py`
+
+Contract when the student profile is too vague:
+
+```json
+{
+  "status": "needs_followup",
+  "student": { "... normalized student profile ..." },
+  "matches": [],
+  "followup_question": "What methods or technical approaches are you most interested in, such as machine learning, NLP, computer vision, HCI, systems, or security?",
+  "reason": "Student interests are still too broad for confident faculty matching."
+}
+```
+
+Rules:
+- The frontend should show the question inline on the form and resubmit with `followup_answer`.
+- Matching should not proceed until the follow-up answer is provided or the profile becomes specific enough.
 
 ## Stage 2: Faculty dataset load
 
 Producer:
-- `data/faculty_db.json` from the staff-database workflow
+- `data/faculty_db.json` from the faculty-dataset workflow
 
 Contract:
 
@@ -84,7 +121,12 @@ Contract:
       }
     ],
     "research_text": "natural language processing machine learning clinical text structured prediction",
-    "embedding": [0.1, 0.2, 0.3],
+    "normalized_research_summary": "Research interests include natural language processing and machine learning for clinical text.",
+    "research_keywords": ["natural language processing", "machine learning", "clinical text"],
+    "paper_titles_text": "Structured prediction with clinical reasoning",
+    "embedding_summary": [0.1, 0.2, 0.3],
+    "embedding_papers": [0.05, 0.1, 0.2],
+    "browser_snippet": "Natural language processing and machine learning for clinical text.",
     "last_active_year": 2024,
     "accepts_undergrads": null
   }
@@ -101,14 +143,46 @@ Required fields per faculty record:
 - `bio`
 - `recent_papers`
 - `research_text`
-- `embedding`
+- `normalized_research_summary`
+- `research_keywords`
+- `paper_titles_text`
+- `embedding_summary`
+- `embedding_papers`
+- `browser_snippet`
 - `last_active_year`
 - `accepts_undergrads`
 
 Rules:
-- `recent_papers` must always be an array.
-- `embedding` may be an empty array during fallback or pre-embedding stages.
-- `research_text` should be the canonical text source for ranking.
+- All scraped faculty may appear in browsing.
+- Records with weak signal may still exist in the dataset but can be marked ineligible for top-match recommendation by the normalization/ranking layer.
+
+## Stage 2b: Faculty browser payload
+
+Producer:
+- `pipeline/build_browser_payload.py`
+
+Contract:
+
+```json
+[
+  {
+    "id": "srikumar_vivek",
+    "name": "Vivek Srikumar",
+    "title": "Associate Professor",
+    "department": "Kahlert School of Computing",
+    "browser_snippet": "Natural language processing and machine learning for clinical text.",
+    "profile_url": "https://example.com/profile",
+    "last_active_year": 2024,
+    "research_keywords": ["natural language processing", "machine learning", "clinical text"],
+    "accepts_undergrads": null,
+    "eligible_for_matching": true
+  }
+]
+```
+
+Rules:
+- This payload is browse-safe and intentionally lighter than the full faculty record.
+- The homepage should use this payload only for browsing, not for ranking.
 
 ## Stage 3: Ranked matches
 
@@ -120,53 +194,41 @@ Contract:
 ```json
 [
   {
-    "faculty": {
-      "id": "srikumar_vivek",
-      "name": "Vivek Srikumar",
-      "title": "Associate Professor",
-      "department": "Kahlert School of Computing",
-      "email": "svivek@cs.utah.edu",
-      "profile_url": "https://example.com/profile",
-      "bio": "Research interests include natural language processing and machine learning for clinical text.",
-      "recent_papers": [],
-      "research_text": "natural language processing machine learning clinical text",
-      "embedding": [],
-      "last_active_year": 2024,
-      "accepts_undergrads": null
+    "faculty": { "... normalized faculty record ..." },
+    "score": 0.68,
+    "overlap_terms": ["machine learning", "clinical text"],
+    "component_scores": {
+      "summary_similarity": 0.74,
+      "facet_similarity": 0.52,
+      "keyword_overlap": 0.44,
+      "recency": 1.0,
+      "undergrad_friendliness": 0.5
     },
-    "score": 0.89,
-    "overlap_terms": ["machine", "learning", "clinical", "text"],
     "match_strength": "strong",
-    "warning": null
+    "warning": null,
+    "rerank_notes": ""
   }
 ]
 ```
 
 Rules:
-- Output must be sorted best-to-worst.
-- Return exactly 5 matches when 5 or more faculty are available.
-- `score` should be numeric.
-- `match_strength` should be one of `strong`, `good`, or `possible`.
-- `warning` is nullable and used for stale or weak records.
+- Candidate generation should score summary similarity, facet similarity, keyword overlap, recency, and undergrad-friendliness.
+- Top candidates may then be reranked by an LLM and diversity-adjusted before the final top 5 is returned.
+- `match_strength` must be one of `strong`, `good`, or `possible`.
 
 ## Stage 4: Match rationale generation
 
 Producer:
-- `pipeline/rationale.py` or rationale logic inside `pipeline/emailer.py`
+- `pipeline/rationale.py`
 
 Contract:
 
 ```json
 {
   "faculty_id": "srikumar_vivek",
-  "rationale": "This faculty member is a strong fit because their recent work in natural language processing and clinical text aligns with the student's stated interests in machine learning for healthcare and language models."
+  "rationale": "This faculty member is a strong fit because their work in natural language processing and clinical text aligns with the student's stated interest in machine learning for healthcare."
 }
 ```
-
-Rules:
-- Ground the explanation in student interests and faculty research only.
-- Do not claim the faculty is actively recruiting unless the dataset says so.
-- Keep it concise and specific enough for a card UI.
 
 ## Stage 5: Email generation
 
@@ -198,11 +260,6 @@ Contract:
 }
 ```
 
-Rules:
-- Always include exactly these three email modes.
-- `subject`, `body`, and `faculty_email` are required in each mode.
-- Emails should be presentable to students without additional cleanup.
-
 ## Stage 6: Agent review
 
 Producer:
@@ -220,42 +277,6 @@ Contract:
 }
 ```
 
-Alternative when revision is needed:
-
-```json
-{
-  "faculty_id": "srikumar_vivek",
-  "approved": false,
-  "issues": [
-    "Rationale is too generic.",
-    "Lab inquiry email does not mention the student's relevant skills."
-  ],
-  "revised_rationale": "Updated rationale text here.",
-  "revised_emails": {
-    "coffee_chat": {
-      "subject": "Undergraduate interested in your research",
-      "body": "Revised body here.",
-      "faculty_email": "svivek@cs.utah.edu"
-    },
-    "lab_inquiry": {
-      "subject": "Question about undergraduate research opportunities",
-      "body": "Revised body here.",
-      "faculty_email": "svivek@cs.utah.edu"
-    },
-    "paper_response": {
-      "subject": "Interested in your recent research direction",
-      "body": "Revised body here.",
-      "faculty_email": "svivek@cs.utah.edu"
-    }
-  }
-}
-```
-
-Rules:
-- One review object per ranked match.
-- Revisions are optional and nullable.
-- The orchestrator decides whether to use original or revised content.
-
 ## Stage 7: Final student-facing results object
 
 Producer:
@@ -265,55 +286,19 @@ Contract:
 
 ```json
 {
-  "student": {
-    "structured_facts": {
-      "name": "Maya Patel",
-      "major": "Computer Science",
-      "year": "Junior",
-      "courses": ["CS 5350 Machine Learning", "CS 5340 NLP"],
-      "skills": ["Python", "PyTorch", "scikit-learn"],
-      "time_commitment_hours": 10,
-      "checkbox_areas": ["Machine Learning", "Healthcare", "Natural Language Processing"]
-    },
-    "research_summary": "Undergraduate in Computer Science seeking research experience in machine learning and language models for healthcare and clinical text.",
-    "confidence": "high"
-  },
+  "status": "ready",
+  "student": { "... normalized student profile ..." },
   "matches": [
     {
-      "faculty": {
-        "id": "srikumar_vivek",
-        "name": "Vivek Srikumar",
-        "title": "Associate Professor",
-        "department": "Kahlert School of Computing",
-        "email": "svivek@cs.utah.edu",
-        "profile_url": "https://example.com/profile",
-        "bio": "Research interests include natural language processing and machine learning for clinical text.",
-        "recent_papers": [],
-        "research_text": "natural language processing machine learning clinical text",
-        "embedding": [],
-        "last_active_year": 2024,
-        "accepts_undergrads": null
-      },
-      "score": 0.89,
+      "faculty": { "... normalized faculty record ..." },
+      "score": 0.68,
       "match_strength": "strong",
       "warning": null,
-      "rationale": "This faculty member is a strong fit because their recent work in natural language processing and clinical text aligns with the student's stated interests.",
+      "rationale": "This faculty member is a strong fit because ...",
       "emails": {
-        "coffee_chat": {
-          "subject": "Undergraduate interested in your research",
-          "body": "Dear Professor Srikumar,\n\n...",
-          "faculty_email": "svivek@cs.utah.edu"
-        },
-        "lab_inquiry": {
-          "subject": "Question about undergraduate research opportunities",
-          "body": "Dear Professor Srikumar,\n\n...",
-          "faculty_email": "svivek@cs.utah.edu"
-        },
-        "paper_response": {
-          "subject": "Interested in your recent research direction",
-          "body": "Dear Professor Srikumar,\n\n...",
-          "faculty_email": "svivek@cs.utah.edu"
-        }
+        "coffee_chat": { "subject": "...", "body": "...", "faculty_email": "..." },
+        "lab_inquiry": { "subject": "...", "body": "...", "faculty_email": "..." },
+        "paper_response": { "subject": "...", "body": "...", "faculty_email": "..." }
       }
     }
   ]
@@ -321,12 +306,6 @@ Contract:
 ```
 
 Rules:
-- This is the only object the frontend should need.
-- The frontend should not recompute ranking or derive email structure.
-- `matches` should be pre-ranked and presentation-ready.
-
-## Integration rules
-
-- The staff-database owner is responsible for Stage 2 compatibility.
-- The pipeline owner is responsible for Stages 1 and 3 through 7.
-- If a schema changes, update this file, `AGENTS.md`, and any sample data in the same PR.
+- This is the only object the results page should need.
+- The frontend should not recompute ranking, retrieval, or email structures.
+- `matches` should already be filtered, ranked, and presentation-ready.

@@ -32,7 +32,7 @@ def generate_rationale(student_profile: dict[str, Any], match: dict[str, Any]) -
 
     faculty = match["faculty"]
     overlap_terms = match.get("overlap_terms") or []
-    overlap_text = ", ".join(overlap_terms[:4]) if overlap_terms else "closely related research interests"
+    overlap_text = ", ".join(overlap_terms[:4]) if overlap_terms else ", ".join(match["faculty"].get("research_keywords", [])[:4]) or "closely related research interests"
     student_interest = student_profile.get("research_summary", "").split(".", 1)[0]
     strength_label = {
         "strong": "a strong fit",
@@ -40,7 +40,7 @@ def generate_rationale(student_profile: dict[str, Any], match: dict[str, Any]) -
         "possible": "a plausible fit",
     }.get(match.get("match_strength"), "a relevant fit")
     rationale = (
-        f"{faculty['name']} is {strength_label} because their work in {_clean_bio_phrase(faculty['bio']).lower()} "
+        f"{faculty['name']} is {strength_label} because their work in {_clean_bio_phrase(faculty.get('normalized_research_summary') or faculty['bio']).lower()} "
         f"aligns with the student's interests described in '{student_interest}'. "
         f"The strongest areas of overlap are {overlap_text}."
     )

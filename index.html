@@ -17,60 +17,109 @@
           </div>
         </a>
         <nav class="site-nav">
+          <a href="/">Dashboard</a>
           <a href="/form">Student Form</a>
-          <a href="/results">Demo Results</a>
+          <a href="/results">Results</a>
         </nav>
       </div>
     </header>
 
     <main class="shell">
-      <section class="hero hero-home">
+      <section class="hero dashboard-hero">
         <div class="hero-copy">
-          <p class="eyebrow">Student Research Discovery</p>
-          <h1>Turn academic curiosity into a faculty connection.</h1>
+          <p class="eyebrow">Student Dashboard</p>
+          <h1>Find the next faculty connection faster.</h1>
           <p class="lede">
-            Utah Research Matcher helps University of Utah students move from broad interests to specific faculty matches and presentable outreach emails with a guided, student-friendly workflow.
+            Resume your form, review likely faculty matches, and browse Utah faculty research in one place. Everything on this page is stored only in this browser for the hackathon MVP.
           </p>
           <div class="hero-actions">
-            <a class="button" href="/form">Start Research Match</a>
-            <a class="button button-secondary" href="/results">View Demo Results</a>
+            <a class="button" href="/form">Start or Resume Form</a>
+            <a class="button button-secondary" href="/results">Open Latest Results</a>
           </div>
         </div>
-        <aside class="hero-panel">
-          <p class="eyebrow">At a Glance</p>
-          <div class="stat-grid">
-            <article class="stat-card">
-              <strong>25,000+</strong>
-              <span>Utah undergrads who could benefit from lower-friction research discovery</span>
-            </article>
-            <article class="stat-card">
-              <strong>Top 5</strong>
-              <span>Faculty matches ranked to student interests, skills, and research direction</span>
-            </article>
-            <article class="stat-card">
-              <strong>3 drafts</strong>
-              <span>Email options designed for different first-contact strategies</span>
-            </article>
+        <aside class="hero-panel dashboard-summary">
+          <p class="eyebrow">Your Activity</p>
+          <div class="summary-metric">
+            <strong id="saved-faculty-count">0</strong>
+            <span>Saved faculty</span>
+          </div>
+          <div class="summary-metric">
+            <strong id="latest-match-count">0</strong>
+            <span>Latest recommended matches</span>
+          </div>
+          <div class="summary-metric">
+            <strong id="browser-record-count">0</strong>
+            <span>Faculty records in browser</span>
           </div>
         </aside>
       </section>
 
-      <section class="feature-strip">
-        <article class="feature-card">
-          <p class="eyebrow">Explore</p>
-          <h2>Describe your interests naturally</h2>
-          <p>Students can use plain-language research interests, course history, and skills without needing prior knowledge of Utah faculty names.</p>
+      <section class="dashboard-grid">
+        <article class="panel dashboard-card">
+          <div class="card-header-inline">
+            <div>
+              <p class="eyebrow">Continue Your Form</p>
+              <h2>Pick up where you left off</h2>
+            </div>
+            <a class="button button-secondary" href="/form">Open form</a>
+          </div>
+          <div id="draft-state" class="empty-state">
+            <p>No unfinished draft yet. Start the form and your progress will be saved in this browser.</p>
+          </div>
         </article>
-        <article class="feature-card">
-          <p class="eyebrow">Match</p>
-          <h2>See ranked faculty recommendations</h2>
-          <p>The pipeline normalizes the student profile, compares it to the faculty dataset, and explains why each match makes sense.</p>
+
+        <article class="panel dashboard-card">
+          <div class="card-header-inline">
+            <div>
+              <p class="eyebrow">Possible Faculty Connections</p>
+              <h2>Recent matches worth revisiting</h2>
+            </div>
+            <a class="button button-secondary" href="/results">View all 5</a>
+          </div>
+          <div id="possible-connections" class="dashboard-cards">
+            <div class="empty-state">
+              <p>No matches yet. Submit the form to see your top faculty recommendations here.</p>
+            </div>
+          </div>
         </article>
-        <article class="feature-card">
-          <p class="eyebrow">Reach Out</p>
-          <h2>Leave with emails worth sending</h2>
-          <p>Students can compare multiple outreach modes and walk away with a message that feels polished, specific, and usable.</p>
-        </article>
+      </section>
+
+      <section class="panel browse-panel">
+        <div class="card-header-inline browse-header">
+          <div>
+            <p class="eyebrow">Browse All Faculty</p>
+            <h2>Explore the full faculty directory</h2>
+            <p class="section-copy">Use search and filters to browse all scraped faculty records, even outside your top matches.</p>
+          </div>
+        </div>
+        <div class="browse-controls">
+          <label>
+            Search faculty or research keywords
+            <input id="browse-search" type="search" placeholder="e.g. clinical text, robotics, HCI">
+          </label>
+          <label>
+            Department
+            <select id="browse-department">
+              <option value="">All departments</option>
+            </select>
+          </label>
+          <label>
+            Research area
+            <select id="browse-keyword">
+              <option value="">All research areas</option>
+            </select>
+          </label>
+          <label>
+            Recent activity
+            <select id="browse-activity">
+              <option value="">Any year</option>
+              <option value="2025">2025+</option>
+              <option value="2024">2024+</option>
+              <option value="2022">2022+</option>
+            </select>
+          </label>
+        </div>
+        <div id="browse-results" class="grid"></div>
       </section>
     </main>
 
@@ -78,13 +127,15 @@
       <div class="shell footer-shell">
         <div class="footer-brand">
           <p class="footer-wordmark">The University of Utah</p>
-          <p>Utah Research Matcher is a hackathon prototype focused on helping undergraduates discover research opportunities faster.</p>
+          <p>Utah Research Matcher is a browser-local prototype for helping undergraduates discover research opportunities faster.</p>
         </div>
         <div class="footer-links">
-          <a href="/form">Start a match</a>
-          <a href="/results">See demo output</a>
+          <a href="/form">Open form</a>
+          <a href="/results">Open results</a>
         </div>
       </div>
     </footer>
+
+    <script type="module" src="/frontend/home.js"></script>
   </body>
 </html>

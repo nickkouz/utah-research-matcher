@@ -17,8 +17,9 @@
           </div>
         </a>
         <nav class="site-nav">
+          <a href="/">Dashboard</a>
           <a href="/form">Student Form</a>
-          <a href="/results">Demo Results</a>
+          <a href="/results">Results</a>
         </nav>
       </div>
     </header>
@@ -27,10 +28,21 @@
       <section class="panel form-shell">
         <div class="form-intro">
           <p class="eyebrow">Student Research Form</p>
-          <h1>Build your research profile.</h1>
+          <h1>Build a research profile with enough signal to match well.</h1>
           <p class="section-copy">
-            Share your background, interests, and goals. The system will normalize your profile, compare it against faculty research, and draft outreach emails you can refine and send.
+            The strongest matches come from specific research questions, methods, and application areas. Your draft saves automatically in this browser.
           </p>
+        </div>
+
+        <div class="panel form-tip-card">
+          <div>
+            <p class="eyebrow">Specificity Meter</p>
+            <h2 id="specificity-label">Too broad</h2>
+            <p id="specificity-copy" class="section-copy">Add a clearer research topic, choose methods and application areas, and mention a class, project, or paper.</p>
+          </div>
+          <div class="meter-shell" aria-hidden="true">
+            <div id="specificity-bar" class="meter-bar"></div>
+          </div>
         </div>
 
         <form id="student-form" class="student-form">
@@ -39,23 +51,23 @@
             <div class="form-grid">
               <label>
                 Name
-                <input name="name" required value="Maya Patel">
+                <input name="name" required placeholder="Maya Patel">
               </label>
               <label>
                 Email
-                <input name="email" type="email" required value="u1234567@utah.edu">
+                <input name="email" type="email" required placeholder="u1234567@utah.edu">
               </label>
               <label>
                 Major
-                <input name="major" required value="Computer Science">
+                <input name="major" required placeholder="Computer Science">
               </label>
               <label>
                 Year
-                <input name="year" required value="Junior">
+                <input name="year" required placeholder="Junior">
               </label>
               <label class="full-span">
                 Career goal
-                <textarea name="goal">Research experience before applying to PhD programs</textarea>
+                <textarea name="goal" placeholder="Research experience before applying to PhD programs"></textarea>
               </label>
               <label>
                 Time commitment (hours/week)
@@ -69,11 +81,11 @@
             <div class="form-grid">
               <label class="full-span">
                 Relevant courses
-                <textarea name="courses" placeholder="Comma-separated">CS 5350 Machine Learning, CS 5340 Natural Language Processing</textarea>
+                <textarea name="courses" placeholder="Comma-separated: CS 5350 Machine Learning, CS 5340 NLP"></textarea>
               </label>
               <label class="full-span">
                 Technical skills
-                <textarea name="skills" placeholder="Comma-separated">Python, PyTorch, scikit-learn</textarea>
+                <textarea name="skills" placeholder="Comma-separated: Python, PyTorch, scikit-learn"></textarea>
               </label>
             </div>
           </section>
@@ -82,25 +94,58 @@
             <h2>Research direction</h2>
             <div class="form-grid">
               <label class="full-span">
-                Research interests
-                <textarea name="interests_freetext" required>I want to use machine learning and language models for healthcare and clinical text.</textarea>
+                What research questions or topics do you want to work on?
+                <textarea name="primary_interest_text" required placeholder="Example: I want to work on machine learning for healthcare, especially language models and clinical text."></textarea>
+                <span class="field-help">Good answers name a topic, a method, and ideally a problem area.</span>
+              </label>
+              <label class="full-span">
+                Classes, projects, papers, or problems that shaped your interest
+                <textarea name="reference_examples" placeholder="Optional: CS 5350 final project on clinical note classification; interested in a paper on LLM reasoning in medicine"></textarea>
               </label>
             </div>
+
             <fieldset class="checkbox-group">
-              <legend>Preferred research areas</legend>
-              <div class="checkbox-grid">
-                <label><input type="checkbox" name="checkbox_areas" value="Machine Learning" checked> Machine Learning</label>
-                <label><input type="checkbox" name="checkbox_areas" value="Natural Language Processing" checked> Natural Language Processing</label>
-                <label><input type="checkbox" name="checkbox_areas" value="Healthcare" checked> Healthcare</label>
-                <label><input type="checkbox" name="checkbox_areas" value="Computer Vision"> Computer Vision</label>
-                <label><input type="checkbox" name="checkbox_areas" value="Human-Computer Interaction"> Human-Computer Interaction</label>
+              <legend>Application areas</legend>
+              <div class="checkbox-grid checkbox-grid-wide">
+                <label><input type="checkbox" name="application_areas" value="Healthcare"> Healthcare</label>
+                <label><input type="checkbox" name="application_areas" value="Education"> Education</label>
+                <label><input type="checkbox" name="application_areas" value="Climate"> Climate</label>
+                <label><input type="checkbox" name="application_areas" value="Robotics"> Robotics</label>
+                <label><input type="checkbox" name="application_areas" value="Social Good"> Social good</label>
+                <label><input type="checkbox" name="application_areas" value="Accessibility"> Accessibility</label>
+                <label><input type="checkbox" name="application_areas" value="Scientific Computing"> Scientific computing</label>
+                <label><input type="checkbox" name="application_areas" value="Sustainability"> Sustainability</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="checkbox-group">
+              <legend>Methods or technical approaches</legend>
+              <div class="checkbox-grid checkbox-grid-wide">
+                <label><input type="checkbox" name="methods" value="Machine Learning"> Machine learning</label>
+                <label><input type="checkbox" name="methods" value="Natural Language Processing"> Natural language processing</label>
+                <label><input type="checkbox" name="methods" value="Computer Vision"> Computer vision</label>
+                <label><input type="checkbox" name="methods" value="Human-Computer Interaction"> Human-computer interaction</label>
+                <label><input type="checkbox" name="methods" value="Systems"> Systems</label>
+                <label><input type="checkbox" name="methods" value="Security"> Security</label>
+                <label><input type="checkbox" name="methods" value="Robotics"> Robotics</label>
+                <label><input type="checkbox" name="methods" value="Artificial Intelligence"> Artificial intelligence</label>
               </div>
             </fieldset>
           </section>
 
+          <section id="followup-shell" class="form-section followup-shell is-hidden">
+            <h2>One more detail before we match</h2>
+            <p id="followup-question" class="section-copy"></p>
+            <label class="full-span">
+              Follow-up answer
+              <textarea name="followup_answer" placeholder="Add one specific detail so the matcher can narrow to the right faculty."></textarea>
+            </label>
+          </section>
+
           <div class="form-actions">
             <button id="submit-button" class="button" type="submit">Generate Matches</button>
-            <a class="button button-secondary" href="/results">Open Demo Results</a>
+            <button id="clear-draft-button" class="button button-secondary" type="button">Clear Draft</button>
+            <a class="button button-secondary" href="/results">Open Latest Results</a>
           </div>
           <p id="form-status" class="section-copy"></p>
         </form>
@@ -111,10 +156,10 @@
       <div class="shell footer-shell">
         <div class="footer-brand">
           <p class="footer-wordmark">The University of Utah</p>
-          <p>Student input is used to create a faculty match profile and outreach drafts for demo purposes.</p>
+          <p>Student input is used only to create faculty match recommendations and outreach drafts for this prototype.</p>
         </div>
       </div>
     </footer>
-    <script src="/frontend/form.js"></script>
+    <script type="module" src="/frontend/form.js"></script>
   </body>
 </html>

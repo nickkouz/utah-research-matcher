@@ -51,9 +51,15 @@ def generate_email_modes(student_profile: dict[str, Any], match: dict[str, Any])
     major = facts["major"]
     year = facts["year"]
     skills = facts["skills"]
+    reference_examples = facts.get("reference_examples", [])
     skills_text = ", ".join(skills) if skills else "my current coursework and technical background"
     interest_area = _interest_clause(student_profile)
     faculty_focus = _clean_bio_phrase(faculty["bio"])
+    example_sentence = (
+        f"A concrete example of this interest for me is {reference_examples[0]}."
+        if reference_examples
+        else ""
+    )
 
     intro = f"My name is {name}, and I am a {year.lower()} majoring in {major} at the University of Utah."
     interest_sentence = f"I am looking for undergraduate research experience in {interest_area}."
@@ -65,7 +71,7 @@ def generate_email_modes(student_profile: dict[str, Any], match: dict[str, Any])
             "subject": "Undergraduate interested in your research",
             "body": (
                 f"Dear {salutation},\n\n"
-                f"{intro} {interest_sentence} {faculty_sentence} "
+                f"{intro} {interest_sentence} {faculty_sentence} {example_sentence} "
                 "Would you be open to a short conversation about your research and how an undergraduate might get involved? "
                 f"{skills_sentence}\n\n"
                 "Thank you for your time,\n"
@@ -77,7 +83,7 @@ def generate_email_modes(student_profile: dict[str, Any], match: dict[str, Any])
             "subject": "Question about undergraduate research opportunities",
             "body": (
                 f"Dear {salutation},\n\n"
-                f"{intro} {interest_sentence} {faculty_sentence} "
+                f"{intro} {interest_sentence} {faculty_sentence} {example_sentence} "
                 "I am reaching out to ask whether you are currently open to working with undergraduates in your group. "
                 f"{skills_sentence}\n\n"
                 "Thank you for considering my note,\n"
@@ -89,7 +95,7 @@ def generate_email_modes(student_profile: dict[str, Any], match: dict[str, Any])
             "subject": "Interested in your recent research direction",
             "body": (
                 f"Dear {salutation},\n\n"
-                f"{intro} {interest_sentence} {faculty_sentence} "
+                f"{intro} {interest_sentence} {faculty_sentence} {example_sentence} "
                 "I would love to learn more about the questions your group is currently exploring and whether there may be a way for an undergraduate to contribute. "
                 f"{skills_sentence}\n\n"
                 "Best regards,\n"

@@ -11,10 +11,11 @@ Utah has 25,000+ undergraduates. Most never do research, often because they do n
 
 ## What this does
 
-1. Student fills out a short intake form describing their major, interests, skills, and goals.
-2. The system matches them to the top 5 faculty whose active research best fits their profile, using semantic embeddings rather than keyword search.
-3. For each match, it drafts three personalized cold emails in different modes: coffee chat, lab inquiry, and paper response.
-4. The student picks the email they like and pastes it into their email client.
+1. Student opens a dashboard to resume an unfinished form, revisit recent faculty matches, and browse the full faculty directory.
+2. Student fills out a structured research form with research topic, methods, application areas, and relevant examples.
+3. The system normalizes the profile, asks one follow-up if the input is still too vague, and then matches the student to the top 5 faculty whose active research best fits the profile.
+4. For each match, it drafts three personalized cold emails in different modes: coffee chat, lab inquiry, and paper response.
+5. The student picks the email they like and pastes it into their email client.
 
 Discovery time: weeks to minutes.
 
@@ -22,9 +23,11 @@ Discovery time: weeks to minutes.
 
 ```text
 Form input
-  -> Normalize profile (LLM)
+  -> Normalize profile into research facets (LLM + fallback rules)
+  -> Follow-up gate for vague profiles
   -> Load faculty dataset
-  -> Match against pre-embedded faculty database (cosine similarity)
+  -> Hybrid retrieval over faculty summaries, keywords, and paper text
+  -> Precision-first rerank + diversity pass
   -> Top 5 faculty
   -> Generate match rationale per faculty (LLM, parallel)
   -> Generate 3 email modes per faculty (LLM, parallel, 15 total)
@@ -36,20 +39,22 @@ Form input
 
 The product has two main application surfaces:
 
-1. Homepage
+1. Student dashboard homepage
 2. Student research form
+3. Results page
 
 Planned user flow:
 
-1. Student lands on the homepage.
+1. Student lands on the dashboard.
 2. Student opens or resumes a research match form.
-3. Student submits academic background, skills, and research interests.
-4. The pipeline produces top faculty matches plus presentable email drafts.
+3. Student submits academic background, methods, application areas, and research interests.
+4. The pipeline either asks one follow-up or produces top faculty matches plus presentable email drafts.
+5. Student can revisit recent results and browse all faculty from the homepage.
 
 Near-term application sections:
 
-- Homepage with entry points to start a form, resume unfinished forms, review unsent email drafts, and browse the complete staff database.
-- Form experience with text boxes, checkboxes, and research-interest inputs that feed the NLP normalization stage.
+- Dashboard with entry points to start or resume a form, revisit recent faculty matches, and browse the complete faculty directory.
+- Form experience with stronger signal capture: research topic, methods, application areas, and reference examples.
 
 Deferred item:
 
@@ -61,8 +66,12 @@ Deferred item:
 /scraper         Faculty data collection
 /pipeline        AI pipeline and orchestration
   /prompts       LLM prompts loaded at runtime
-/frontend        Demo UI
-/data            Demo student and faculty datasets
+/frontend        Shared JS, CSS, and assets
+/form            Student form route
+/results         Results route
+/data            Demo student, faculty, and browser payload datasets
+/evals           Matching evaluation cases
+index.html       Dashboard route
 AGENTS.md        Context file for AI coding assistants
 README.md        This file
 ```
@@ -88,13 +97,26 @@ Then open `http://127.0.0.1:8000`.
 
 The generated demo output is written to `data/demo_results.json`. The app will automatically use `data/faculty_db.json` if present, and otherwise fall back to `data/fallback_db.json`.
 
+To regenerate the faculty browser payload:
+
+```bash
+python -m pipeline.build_browser_payload
+```
+
+To run the lightweight matching eval harness:
+
+```bash
+python -m pipeline.evaluate_matches
+```
+
 ## Deployment notes
 
 The app is structured to deploy on Vercel with:
 
-- static frontend pages at `/`, `/form`, and `/results`
-- Python API function at `api/index.py`
-- route rewrite from `/api/match` to `/api` in `vercel.json`
+- static dashboard, form, and results pages at `/`, `/form`, and `/results`
+- a single Python API function at `api/index.py`
+- a rewrite from `/api/match` to `/api` in `vercel.json`
+- static faculty browser payload in `data/faculty_browser.json`
 
 For model-backed generation and embeddings in deployment, set:
 
@@ -132,4 +154,11 @@ Working agreement:
 
 ## Status
 
-MVP scaffold complete. Live scraping, embedding calls, and richer faculty enrichment are the next steps.
+Revised MVP implemented:
+
+- student-facing dashboard homepage
+- structured form with autosave, specificity meter, and follow-up gating
+- hybrid retrieval pipeline with richer faculty normalization, reranking, and diversity pass
+- faculty browser payload and lightweight eval harness
+
+Next major step: replace the fallback faculty dataset with the full scraped and enriched Utah faculty database.

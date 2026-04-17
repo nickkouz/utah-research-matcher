@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Demo Results</title>
+    <title>Faculty Match Results</title>
     <link rel="stylesheet" href="/frontend/styles.css">
   </head>
   <body>
@@ -17,20 +17,27 @@
           </div>
         </a>
         <nav class="site-nav">
+          <a href="/">Dashboard</a>
           <a href="/form">Student Form</a>
-          <a href="/results">Demo Results</a>
+          <a href="/results">Results</a>
         </nav>
       </div>
     </header>
 
     <main class="shell">
       <section id="student-card" class="panel student-summary"></section>
-      <section>
+      <section id="results-empty" class="panel empty-state is-hidden">
+        <p class="eyebrow">No Results Yet</p>
+        <h2>Generate a match before opening this page.</h2>
+        <p class="section-copy">Submit the form first, or use the demo payload if you are validating the UI.</p>
+        <a class="button" href="/form">Open student form</a>
+      </section>
+      <section id="results-section">
         <div class="section-header results-header">
           <div>
-            <p class="eyebrow">Top 5 Faculty Matches</p>
+            <p class="eyebrow">Top Faculty Matches</p>
             <h2>Ranked recommendations and draft outreach emails</h2>
-            <p class="section-copy">Toggle between outreach modes to compare how a student might approach each faculty member.</p>
+            <p class="section-copy">These cards are pre-ranked by the backend. Save a faculty member to make them easier to revisit on the dashboard.</p>
           </div>
           <div class="hero-actions">
             <a class="button button-secondary" href="/form">Edit Student Form</a>
@@ -48,6 +55,6 @@
         </div>
       </div>
     </footer>
-    <script src="/frontend/app.js"></script>
+    <script type="module" src="/frontend/app.js"></script>
   </body>
 </html>

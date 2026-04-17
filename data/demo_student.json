@@ -12,12 +12,21 @@
     "PyTorch",
     "scikit-learn"
   ],
+  "primary_interest_text": "I want to use machine learning and language models for healthcare and clinical text.",
   "interests_freetext": "I want to use machine learning and language models for healthcare and clinical text.",
-  "checkbox_areas": [
+  "application_areas": [
+    "Healthcare"
+  ],
+  "methods": [
     "Machine Learning",
-    "Healthcare",
     "Natural Language Processing"
   ],
+  "checkbox_areas": [
+    "Healthcare",
+    "Machine Learning",
+    "Natural Language Processing"
+  ],
+  "reference_examples": "CS 5350 final project on text classification for medical notes",
   "goal": "Research experience before applying to PhD programs",
   "commitment_hours": 10
 }

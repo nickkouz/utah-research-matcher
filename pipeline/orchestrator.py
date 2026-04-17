@@ -6,18 +6,19 @@ from typing import Any
 
 from pipeline.critic import apply_reviews, review_match
 from pipeline.emailer import apply_email_payloads, generate_email_modes
+from pipeline.faculty_data import (
+    DATA_DIR,
+    load_faculty_db,
+    resolve_faculty_dataset_path,
+)
 from pipeline.normalizer import load_student, normalize_student_profile
 from pipeline.openai_client import embed_text, has_openai_client
-from pipeline.ranker import load_faculty_db, top_matches
+from pipeline.ranker import top_matches
 from pipeline.rationale import apply_rationale_payloads, generate_rationale
 from pipeline.vagueness import evaluate_vagueness
 
 
-ROOT = Path(__file__).resolve().parents[1]
-DATA_DIR = ROOT / "data"
 RESULTS_PATH = DATA_DIR / "demo_results.json"
-PRIMARY_FACULTY_DB_PATH = DATA_DIR / "faculty_db.json"
-FALLBACK_FACULTY_DB_PATH = DATA_DIR / "fallback_db.json"
 
 
 def run_pipeline(student_path: Path | None = None, faculty_path: Path | None = None) -> dict[str, Any]:
@@ -33,9 +34,17 @@ def run_pipeline_for_student(
     faculty_records = load_faculty_db(resolved_faculty_path)
 
     student_profile = normalize_student_profile(student_raw)
-    _ = evaluate_vagueness(student_profile)
-    student_embedding = embed_text(student_profile["research_summary"]) if has_openai_client() else []
+    vagueness = evaluate_vagueness(student_profile)
+    if vagueness["needs_followup"] and not str(student_raw.get("followup_answer") or "").strip():
+        return {
+            "status": "needs_followup",
+            "student": student_profile,
+            "matches": [],
+            "followup_question": vagueness["followup_question"],
+            "reason": vagueness["reason"],
+        }
 
+    student_embedding = embed_text(student_profile["research_summary"]) if has_openai_client() else []
     matches = top_matches(student_profile, faculty_records, limit=5, student_embedding=student_embedding)
 
     rationale_payloads = [generate_rationale(student_profile, match) for match in matches]
@@ -48,15 +57,20 @@ def run_pipeline_for_student(
     matches = apply_reviews(matches, reviews)
 
     final_matches = [_finalize_match(match) for match in matches]
-    result = {"student": student_profile, "matches": final_matches}
-    RESULTS_PATH.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    result = {
+        "status": "ready",
+        "student": student_profile,
+        "matches": final_matches,
+    }
+    _safe_write_results(result)
     return result
 
 
-def resolve_faculty_dataset_path() -> Path:
-    if PRIMARY_FACULTY_DB_PATH.exists():
-        return PRIMARY_FACULTY_DB_PATH
-    return FALLBACK_FACULTY_DB_PATH
+def _safe_write_results(result: dict[str, Any]) -> None:
+    try:
+        RESULTS_PATH.write_text(json.dumps(result, indent=2), encoding="utf-8")
+    except OSError:
+        return
 
 
 def _finalize_match(match: dict[str, Any]) -> dict[str, Any]:

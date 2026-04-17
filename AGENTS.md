@@ -25,10 +25,13 @@ The system is a linear pipeline with parallelization at the LLM stages:
 [Stage 1: Normalize student profile]        (1 LLM call)
       |
       v
+[Stage 1b: Follow-up gate for vague input]  (0-1 LLM call)
+      |
+      v
 [Stage 2: Load faculty dataset]             (local file)
       |
       v
-[Stage 3: Embed student and rank faculty]   (1 embedding call + cosine similarity)
+[Stage 3: Hybrid retrieve + rerank + diversify]   (embeddings + reranker)
       |
       v
 [Stage 4: Generate 5 match rationales]      (5 parallel LLM calls)
@@ -119,9 +122,15 @@ Fields:
 
 ```json
 {
-  "structured_facts": { "... copied from input ..." },
+  "structured_facts": { "... cleaned factual fields ..." },
   "research_summary": "Undergraduate CS student interested in machine learning for medical imaging...",
-  "confidence": "high"
+  "research_methods": ["Machine Learning", "Computer Vision"],
+  "application_domains": ["Healthcare"],
+  "interest_keywords": ["medical imaging", "machine learning"],
+  "experience_signals": ["CS 5350 Machine Learning", "Python"],
+  "confidence": "high",
+  "needs_followup": false,
+  "followup_question": ""
 }
 ```
 
@@ -151,19 +160,20 @@ Fields:
 
 ## Product surfaces
 
-The application has two primary UI surfaces for the MVP:
+The application has three primary UI surfaces for the MVP:
 
-- Homepage
+- Dashboard homepage
 - Student research form
+- Results page
 
 ### Homepage goals
 
-The homepage should eventually provide:
+The dashboard should provide:
 
 - entry point to start a new research match
 - access to unfinished forms
-- access to unsent email drafts
-- access to the complete staff database
+- access to recent faculty connections
+- access to the complete faculty browser
 
 ### Form goals
 
@@ -171,10 +181,12 @@ The form should collect:
 
 - student academic background
 - skills
-- free-text research interests
-- checkbox-based preferred research areas
+- primary research topic or question
+- methods / technical approaches
+- application areas
+- optional classes, projects, papers, or problems that shaped the interest
 
-This form data feeds the NLP normalization stage before ranking begins.
+This form data feeds the normalization stage before ranking begins. The form should autosave locally and support one follow-up question when the profile is too vague.
 
 ### Deferred authentication
 
@@ -194,25 +206,35 @@ UNID login is part of the broader product vision, but it is explicitly out of sc
 /pipeline          AI pipeline / matching owner
   normalizer.py    Stage 1
   vagueness.py     Stage 2
-  ranker.py        Stages 3-4
-  rationale.py     Stage 5
-  emailer.py       Stage 6
-  critic.py        Stage 7
+  ranker.py        Stage 3
+  rationale.py     Stage 4
+  emailer.py       Stage 5
+  critic.py        Stage 6
   orchestrator.py  Top-level runner
+  build_browser_payload.py
+  evaluate_matches.py
   /prompts
     01_normalizer.md
     02_vagueness.md
     03_rationale.md
     04_emailer.md
     05_critic.md
-/frontend          UI and demo shell
-  index.html
-  results.html
-  app.js
+/frontend          Shared UI assets
   styles.css
+  app.js
+  form.js
+  home.js
+  shared.js
+/form
+  index.html
+/results
+  index.html
+/evals
+  match_eval_cases.json
 /data
   faculty_db.json
   fallback_db.json
+  faculty_browser.json
   demo_student.json
 AGENTS.md
 README.md
@@ -261,12 +283,12 @@ Load with `python-dotenv` on the backend.
 
 ### Models
 
-- Generation: GPT-5-Codex or GPT-5
+- Generation: GPT-5 mini by default
 - Embeddings: `text-embedding-3-small`, dimension 1536
 
 ### Structured output
 
-All LLM prompts return JSON. Use structured output or JSON mode. Parse defensively and retry once on malformed responses.
+All LLM prompts return JSON. Prefer structured outputs when available, then fall back to JSON mode defensively.
 
 ### Parallelization
 
