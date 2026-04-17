@@ -65,6 +65,13 @@ a {
   max-height: 44px;
 }
 
+.footer-wordmark {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .brand-fallback {
   display: inline-flex;
   align-items: center;
