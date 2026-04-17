@@ -81,7 +81,7 @@ The canonical stage-by-stage JSON contracts live in `PIPELINE_CONTRACTS.md`. Bot
 python -m venv .venv
 .venv\Scripts\activate
 pip install -r requirements.txt
-python app.py
+python dev_server.py
 ```
 
 Then open `http://127.0.0.1:8000`.
@@ -92,9 +92,9 @@ The generated demo output is written to `data/demo_results.json`. The app will a
 
 The app is structured to deploy on Vercel with:
 
-- static frontend files under `frontend/`
-- Python API function at `api/match.py`
-- route rewrites in `vercel.json`
+- static frontend pages at `/`, `/form`, and `/results`
+- Python API function at `api/index.py`
+- route rewrite from `/api/match` to `/api` in `vercel.json`
 
 For model-backed generation and embeddings in deployment, set:
 
@@ -133,5 +133,3 @@ Working agreement:
 ## Status
 
 MVP scaffold complete. Live scraping, embedding calls, and richer faculty enrichment are the next steps.
-=======
-# utah-research-matcher
