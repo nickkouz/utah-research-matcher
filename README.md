@@ -1,3 +1,4 @@
+
 # Utah Research Matcher
 
 A Codex-powered agent that matches University of Utah undergraduates with faculty researchers whose active work aligns with the student's interests, and drafts personalized cold emails for outreach.
@@ -132,3 +133,5 @@ Working agreement:
 ## Status
 
 MVP scaffold complete. Live scraping, embedding calls, and richer faculty enrichment are the next steps.
+=======
+# utah-research-matcher
