@@ -20,7 +20,7 @@
         "Natural Language Processing"
       ]
     },
-    "research_summary": "Undergraduate in Computer Science seeking research experience in machine learning and language models for healthcare and clinical text. preferred areas include Machine Learning, Healthcare, Natural Language Processing current technical background includes Python, PyTorch, scikit-learn career goal: Research experience before applying to PhD programs.",
+    "research_summary": "Undergraduate in Computer Science seeking research experience in machine learning and language models for healthcare and clinical text. Preferred areas include Machine Learning, Healthcare, Natural Language Processing. Current technical background includes Python, PyTorch, scikit-learn. Career goal: Research experience before applying to PhD programs.",
     "confidence": "medium"
   },
   "matches": [
@@ -39,32 +39,25 @@
         "last_active_year": 2025,
         "accepts_undergrads": null
       },
-      "score": 0.1782,
-      "overlap_terms": [
-        "language",
-        "models",
-        "natural",
-        "processing",
-        "text"
-      ],
+      "score": 0.1582,
       "match_strength": "good",
       "warning": null,
-      "rationale": "Ana Marasovic's work in research interests in artificial intelligence with a focus on natural language processing aligns with the student's profile through language, models, natural, processing, text. The faculty profile also shows recent activity that supports outreach for current research opportunities.",
+      "rationale": "Ana Marasovic is a good fit because their work in artificial intelligence with a focus on natural language processing aligns with the student's interests described in 'Undergraduate in Computer Science seeking research experience in machine learning and language models for healthcare and clinical text'. The strongest areas of overlap are language, models, natural, processing.",
       "emails": {
         "coffee_chat": {
-          "faculty_email": "ana.marasovic@utah.edu",
           "subject": "Undergraduate interested in your research",
-          "body": "Dear Professor Ana,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am seeking undergraduate research experience related to machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights research interests in artificial intelligence with a focus on natural language processing. Would you be open to a short conversation about your lab and how an undergraduate might get involved? My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for your time,\nMaya Patel"
+          "body": "Dear Professor Marasovic,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am looking for undergraduate research experience in machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights artificial intelligence with a focus on natural language processing. Would you be open to a short conversation about your research and how an undergraduate might get involved? My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for your time,\nMaya Patel",
+          "faculty_email": "ana.marasovic@utah.edu"
         },
         "lab_inquiry": {
-          "faculty_email": "ana.marasovic@utah.edu",
           "subject": "Question about undergraduate research opportunities",
-          "body": "Dear Professor Ana,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am seeking undergraduate research experience related to machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights research interests in artificial intelligence with a focus on natural language processing. I am reaching out to ask whether you are open to working with undergraduates in your research group. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for considering my note,\nMaya Patel"
+          "body": "Dear Professor Marasovic,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am looking for undergraduate research experience in machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights artificial intelligence with a focus on natural language processing. I am reaching out to ask whether you are currently open to working with undergraduates in your group. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for considering my note,\nMaya Patel",
+          "faculty_email": "ana.marasovic@utah.edu"
         },
         "paper_response": {
-          "faculty_email": "ana.marasovic@utah.edu",
           "subject": "Interested in your recent research direction",
-          "body": "Dear Professor Ana,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am seeking undergraduate research experience related to machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights research interests in artificial intelligence with a focus on natural language processing. I would love to learn more about the questions your group is currently exploring and whether there may be a way for an undergraduate to contribute. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nBest regards,\nMaya Patel"
+          "body": "Dear Professor Marasovic,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am looking for undergraduate research experience in machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights artificial intelligence with a focus on natural language processing. I would love to learn more about the questions your group is currently exploring and whether there may be a way for an undergraduate to contribute. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nBest regards,\nMaya Patel",
+          "faculty_email": "ana.marasovic@utah.edu"
         }
       }
     },
@@ -83,32 +76,25 @@
         "last_active_year": 2024,
         "accepts_undergrads": null
       },
-      "score": 0.1782,
-      "overlap_terms": [
-        "computer",
-        "language",
-        "learning",
-        "natural",
-        "processing"
-      ],
+      "score": 0.1582,
       "match_strength": "good",
       "warning": null,
-      "rationale": "Kenneth Marino's work in research interests in computer vision and natural language processing aligns with the student's profile through computer, language, learning, natural, processing. The faculty profile also shows recent activity that supports outreach for current research opportunities.",
+      "rationale": "Kenneth Marino is a good fit because their work in computer vision and natural language processing aligns with the student's interests described in 'Undergraduate in Computer Science seeking research experience in machine learning and language models for healthcare and clinical text'. The strongest areas of overlap are computer, language, learning, natural.",
       "emails": {
         "coffee_chat": {
-          "faculty_email": "kenneth.marino@utah.edu",
           "subject": "Undergraduate interested in your research",
-          "body": "Dear Professor Kenneth,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am seeking undergraduate research experience related to machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights research interests in computer vision and natural language processing. Would you be open to a short conversation about your lab and how an undergraduate might get involved? My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for your time,\nMaya Patel"
+          "body": "Dear Professor Marino,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am looking for undergraduate research experience in machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights computer vision and natural language processing. Would you be open to a short conversation about your research and how an undergraduate might get involved? My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for your time,\nMaya Patel",
+          "faculty_email": "kenneth.marino@utah.edu"
         },
         "lab_inquiry": {
-          "faculty_email": "kenneth.marino@utah.edu",
           "subject": "Question about undergraduate research opportunities",
-          "body": "Dear Professor Kenneth,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am seeking undergraduate research experience related to machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights research interests in computer vision and natural language processing. I am reaching out to ask whether you are open to working with undergraduates in your research group. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for considering my note,\nMaya Patel"
+          "body": "Dear Professor Marino,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am looking for undergraduate research experience in machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights computer vision and natural language processing. I am reaching out to ask whether you are currently open to working with undergraduates in your group. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for considering my note,\nMaya Patel",
+          "faculty_email": "kenneth.marino@utah.edu"
         },
         "paper_response": {
-          "faculty_email": "kenneth.marino@utah.edu",
           "subject": "Interested in your recent research direction",
-          "body": "Dear Professor Kenneth,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am seeking undergraduate research experience related to machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights research interests in computer vision and natural language processing. I would love to learn more about the questions your group is currently exploring and whether there may be a way for an undergraduate to contribute. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nBest regards,\nMaya Patel"
+          "body": "Dear Professor Marino,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am looking for undergraduate research experience in machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights computer vision and natural language processing. I would love to learn more about the questions your group is currently exploring and whether there may be a way for an undergraduate to contribute. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nBest regards,\nMaya Patel",
+          "faculty_email": "kenneth.marino@utah.edu"
         }
       }
     },
@@ -127,30 +113,25 @@
         "last_active_year": 2024,
         "accepts_undergrads": null
       },
-      "score": 0.1269,
-      "overlap_terms": [
-        "computer",
-        "learning",
-        "machine"
-      ],
-      "match_strength": "good",
+      "score": 0.1069,
+      "match_strength": "possible",
       "warning": null,
-      "rationale": "Guanhong Tao's work in research interests in machine learning and computer security aligns with the student's profile through computer, learning, machine. The faculty profile also shows recent activity that supports outreach for current research opportunities.",
+      "rationale": "Guanhong Tao is a plausible fit because their work in machine learning and computer security aligns with the student's interests described in 'Undergraduate in Computer Science seeking research experience in machine learning and language models for healthcare and clinical text'. The strongest areas of overlap are computer, learning, machine.",
       "emails": {
         "coffee_chat": {
-          "faculty_email": "guanhong.tao@utah.edu",
           "subject": "Undergraduate interested in your research",
-          "body": "Dear Professor Guanhong,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am seeking undergraduate research experience related to machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights research interests in machine learning and computer security. Would you be open to a short conversation about your lab and how an undergraduate might get involved? My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for your time,\nMaya Patel"
+          "body": "Dear Professor Tao,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am looking for undergraduate research experience in machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights machine learning and computer security. Would you be open to a short conversation about your research and how an undergraduate might get involved? My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for your time,\nMaya Patel",
+          "faculty_email": "guanhong.tao@utah.edu"
         },
         "lab_inquiry": {
-          "faculty_email": "guanhong.tao@utah.edu",
           "subject": "Question about undergraduate research opportunities",
-          "body": "Dear Professor Guanhong,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am seeking undergraduate research experience related to machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights research interests in machine learning and computer security. I am reaching out to ask whether you are open to working with undergraduates in your research group. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for considering my note,\nMaya Patel"
+          "body": "Dear Professor Tao,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am looking for undergraduate research experience in machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights machine learning and computer security. I am reaching out to ask whether you are currently open to working with undergraduates in your group. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for considering my note,\nMaya Patel",
+          "faculty_email": "guanhong.tao@utah.edu"
         },
         "paper_response": {
-          "faculty_email": "guanhong.tao@utah.edu",
           "subject": "Interested in your recent research direction",
-          "body": "Dear Professor Guanhong,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am seeking undergraduate research experience related to machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights research interests in machine learning and computer security. I would love to learn more about the questions your group is currently exploring and whether there may be a way for an undergraduate to contribute. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nBest regards,\nMaya Patel"
+          "body": "Dear Professor Tao,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am looking for undergraduate research experience in machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights machine learning and computer security. I would love to learn more about the questions your group is currently exploring and whether there may be a way for an undergraduate to contribute. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nBest regards,\nMaya Patel",
+          "faculty_email": "guanhong.tao@utah.edu"
         }
       }
     },
@@ -169,30 +150,25 @@
         "last_active_year": 2024,
         "accepts_undergrads": null
       },
-      "score": 0.1232,
-      "overlap_terms": [
-        "computer",
-        "learning",
-        "machine"
-      ],
-      "match_strength": "good",
+      "score": 0.1032,
+      "match_strength": "possible",
       "warning": null,
-      "rationale": "Rajeev Balasubramonian's work in research interests in computer architecture, high-performance computing, and scalable machine learning aligns with the student's profile through computer, learning, machine. The faculty profile also shows recent activity that supports outreach for current research opportunities.",
+      "rationale": "Rajeev Balasubramonian is a plausible fit because their work in computer architecture, high-performance computing, and scalable machine learning aligns with the student's interests described in 'Undergraduate in Computer Science seeking research experience in machine learning and language models for healthcare and clinical text'. The strongest areas of overlap are computer, learning, machine.",
       "emails": {
         "coffee_chat": {
-          "faculty_email": "rajeev@cs.utah.edu",
           "subject": "Undergraduate interested in your research",
-          "body": "Dear Professor Rajeev,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am seeking undergraduate research experience related to machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights research interests in computer architecture, high-performance computing, and scalable machine learning. Would you be open to a short conversation about your lab and how an undergraduate might get involved? My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for your time,\nMaya Patel"
+          "body": "Dear Professor Balasubramonian,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am looking for undergraduate research experience in machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights computer architecture, high-performance computing, and scalable machine learning. Would you be open to a short conversation about your research and how an undergraduate might get involved? My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for your time,\nMaya Patel",
+          "faculty_email": "rajeev@cs.utah.edu"
         },
         "lab_inquiry": {
-          "faculty_email": "rajeev@cs.utah.edu",
           "subject": "Question about undergraduate research opportunities",
-          "body": "Dear Professor Rajeev,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am seeking undergraduate research experience related to machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights research interests in computer architecture, high-performance computing, and scalable machine learning. I am reaching out to ask whether you are open to working with undergraduates in your research group. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for considering my note,\nMaya Patel"
+          "body": "Dear Professor Balasubramonian,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am looking for undergraduate research experience in machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights computer architecture, high-performance computing, and scalable machine learning. I am reaching out to ask whether you are currently open to working with undergraduates in your group. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for considering my note,\nMaya Patel",
+          "faculty_email": "rajeev@cs.utah.edu"
         },
         "paper_response": {
-          "faculty_email": "rajeev@cs.utah.edu",
           "subject": "Interested in your recent research direction",
-          "body": "Dear Professor Rajeev,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am seeking undergraduate research experience related to machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights research interests in computer architecture, high-performance computing, and scalable machine learning. I would love to learn more about the questions your group is currently exploring and whether there may be a way for an undergraduate to contribute. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nBest regards,\nMaya Patel"
+          "body": "Dear Professor Balasubramonian,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am looking for undergraduate research experience in machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights computer architecture, high-performance computing, and scalable machine learning. I would love to learn more about the questions your group is currently exploring and whether there may be a way for an undergraduate to contribute. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nBest regards,\nMaya Patel",
+          "faculty_email": "rajeev@cs.utah.edu"
         }
       }
     },
@@ -211,29 +187,25 @@
         "last_active_year": 2024,
         "accepts_undergrads": null
       },
-      "score": 0.1,
-      "overlap_terms": [
-        "computer",
-        "learning"
-      ],
-      "match_strength": "good",
+      "score": 0.08,
+      "match_strength": "possible",
       "warning": null,
-      "rationale": "Ziad Al-Halah's work in research interests in artificial intelligence and computer vision aligns with the student's profile through computer, learning. The faculty profile also shows recent activity that supports outreach for current research opportunities.",
+      "rationale": "Ziad Al-Halah is a plausible fit because their work in artificial intelligence and computer vision aligns with the student's interests described in 'Undergraduate in Computer Science seeking research experience in machine learning and language models for healthcare and clinical text'. The strongest areas of overlap are computer, learning.",
       "emails": {
         "coffee_chat": {
-          "faculty_email": "ziad.al-halah@utah.edu",
           "subject": "Undergraduate interested in your research",
-          "body": "Dear Professor Ziad,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am seeking undergraduate research experience related to machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights research interests in artificial intelligence and computer vision. Would you be open to a short conversation about your lab and how an undergraduate might get involved? My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for your time,\nMaya Patel"
+          "body": "Dear Professor Al-Halah,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am looking for undergraduate research experience in machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights artificial intelligence and computer vision. Would you be open to a short conversation about your research and how an undergraduate might get involved? My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for your time,\nMaya Patel",
+          "faculty_email": "ziad.al-halah@utah.edu"
         },
         "lab_inquiry": {
-          "faculty_email": "ziad.al-halah@utah.edu",
           "subject": "Question about undergraduate research opportunities",
-          "body": "Dear Professor Ziad,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am seeking undergraduate research experience related to machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights research interests in artificial intelligence and computer vision. I am reaching out to ask whether you are open to working with undergraduates in your research group. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for considering my note,\nMaya Patel"
+          "body": "Dear Professor Al-Halah,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am looking for undergraduate research experience in machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights artificial intelligence and computer vision. I am reaching out to ask whether you are currently open to working with undergraduates in your group. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nThank you for considering my note,\nMaya Patel",
+          "faculty_email": "ziad.al-halah@utah.edu"
         },
         "paper_response": {
-          "faculty_email": "ziad.al-halah@utah.edu",
           "subject": "Interested in your recent research direction",
-          "body": "Dear Professor Ziad,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am seeking undergraduate research experience related to machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights research interests in artificial intelligence and computer vision. I would love to learn more about the questions your group is currently exploring and whether there may be a way for an undergraduate to contribute. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nBest regards,\nMaya Patel"
+          "body": "Dear Professor Al-Halah,\n\nMy name is Maya Patel, and I am a junior majoring in Computer Science at the University of Utah. I am looking for undergraduate research experience in machine learning and language models for healthcare and clinical text. I was especially interested in your work because your profile highlights artificial intelligence and computer vision. I would love to learn more about the questions your group is currently exploring and whether there may be a way for an undergraduate to contribute. My current background includes Python, PyTorch, scikit-learn, and I would be excited to contribute while continuing to learn.\n\nBest regards,\nMaya Patel",
+          "faculty_email": "ziad.al-halah@utah.edu"
         }
       }
     }

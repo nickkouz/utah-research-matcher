@@ -25,22 +25,19 @@ The system is a linear pipeline with parallelization at the LLM stages:
 [Stage 1: Normalize student profile]        (1 LLM call)
       |
       v
-[Stage 2: Vagueness check and follow-up]    (0-1 LLM calls, conditional)
+[Stage 2: Load faculty dataset]             (local file)
       |
       v
-[Stage 3: Load pre-built faculty_db.json]   (no LLM, local file)
+[Stage 3: Embed student and rank faculty]   (1 embedding call + cosine similarity)
       |
       v
-[Stage 4: Embed student, cosine similarity] (1 embedding call)
+[Stage 4: Generate 5 match rationales]      (5 parallel LLM calls)
       |
       v
-[Stage 5: Generate 5 match rationales]      (5 parallel LLM calls)
+[Stage 5: Generate 15 emails: 5 faculty x 3 modes]  (15 parallel LLM calls)
       |
       v
-[Stage 6: Generate 15 emails: 5 faculty x 3 modes]  (15 parallel LLM calls)
-      |
-      v
-[Stage 7: Critic review with 1 revision loop max]   (up to 30 parallel LLM calls)
+[Stage 6: Agent review with 1 revision loop max]   (up to 30 parallel LLM calls)
       |
       v
 [Results page: 5 faculty cards with toggleable emails]
@@ -66,6 +63,8 @@ Pre-hackathon work (done once, not during demo):
 ## Data contracts
 
 These are the canonical schemas. If you change one, update this file and tell the team.
+
+For the full stage-by-stage pipeline contracts, also see `PIPELINE_CONTRACTS.md`.
 
 ### Faculty record (in `faculty_db.json`)
 
@@ -147,6 +146,39 @@ Fields:
   ]
 }
 ```
+
+---
+
+## Product surfaces
+
+The application has two primary UI surfaces for the MVP:
+
+- Homepage
+- Student research form
+
+### Homepage goals
+
+The homepage should eventually provide:
+
+- entry point to start a new research match
+- access to unfinished forms
+- access to unsent email drafts
+- access to the complete staff database
+
+### Form goals
+
+The form should collect:
+
+- student academic background
+- skills
+- free-text research interests
+- checkbox-based preferred research areas
+
+This form data feeds the NLP normalization stage before ranking begins.
+
+### Deferred authentication
+
+UNID login is part of the broader product vision, but it is explicitly out of scope for the current hackathon MVP.
 
 ---
 

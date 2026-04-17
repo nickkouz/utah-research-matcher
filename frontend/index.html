@@ -7,15 +7,84 @@
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
+    <header class="site-header">
+      <div class="shell header-shell">
+        <a class="brand-home" href="/">
+          <img class="brand-logo brand-logo-primary" src="/frontend/assets/utah-logo-primary.svg" alt="University of Utah">
+          <div class="brand-fallback" aria-hidden="true">
+            <span class="brand-fallback-badge">U</span>
+            <span class="brand-fallback-text">The University of Utah</span>
+          </div>
+        </a>
+        <nav class="site-nav">
+          <a href="/form">Student Form</a>
+          <a href="/results">Demo Results</a>
+        </nav>
+      </div>
+    </header>
+
     <main class="shell">
-      <section class="hero">
-        <p class="eyebrow">Build with AI Codex Hackathon</p>
-        <h1>Match Utah undergrads to research mentors in minutes.</h1>
-        <p class="lede">
-          This demo normalizes a student profile, ranks faculty research fit, and drafts ready-to-send cold emails.
-        </p>
-        <a class="button" href="results.html">Open Demo Results</a>
+      <section class="hero hero-home">
+        <div class="hero-copy">
+          <p class="eyebrow">Student Research Discovery</p>
+          <h1>Turn academic curiosity into a faculty connection.</h1>
+          <p class="lede">
+            Utah Research Matcher helps University of Utah students move from broad interests to specific faculty matches and presentable outreach emails with a guided, student-friendly workflow.
+          </p>
+          <div class="hero-actions">
+            <a class="button" href="/form">Start Research Match</a>
+            <a class="button button-secondary" href="/results">View Demo Results</a>
+          </div>
+        </div>
+        <aside class="hero-panel">
+          <p class="eyebrow">At a Glance</p>
+          <div class="stat-grid">
+            <article class="stat-card">
+              <strong>25,000+</strong>
+              <span>Utah undergrads who could benefit from lower-friction research discovery</span>
+            </article>
+            <article class="stat-card">
+              <strong>Top 5</strong>
+              <span>Faculty matches ranked to student interests, skills, and research direction</span>
+            </article>
+            <article class="stat-card">
+              <strong>3 drafts</strong>
+              <span>Email options designed for different first-contact strategies</span>
+            </article>
+          </div>
+        </aside>
+      </section>
+
+      <section class="feature-strip">
+        <article class="feature-card">
+          <p class="eyebrow">Explore</p>
+          <h2>Describe your interests naturally</h2>
+          <p>Students can use plain-language research interests, course history, and skills without needing prior knowledge of Utah faculty names.</p>
+        </article>
+        <article class="feature-card">
+          <p class="eyebrow">Match</p>
+          <h2>See ranked faculty recommendations</h2>
+          <p>The pipeline normalizes the student profile, compares it to the faculty dataset, and explains why each match makes sense.</p>
+        </article>
+        <article class="feature-card">
+          <p class="eyebrow">Reach Out</p>
+          <h2>Leave with emails worth sending</h2>
+          <p>Students can compare multiple outreach modes and walk away with a message that feels polished, specific, and usable.</p>
+        </article>
       </section>
     </main>
+
+    <footer class="site-footer">
+      <div class="shell footer-shell">
+        <div class="footer-brand">
+          <img class="brand-logo brand-logo-white" src="/frontend/assets/utah-logo-white.svg" alt="University of Utah">
+          <p>Utah Research Matcher is a hackathon prototype focused on helping undergraduates discover research opportunities faster.</p>
+        </div>
+        <div class="footer-links">
+          <a href="/form">Start a match</a>
+          <a href="/results">See demo output</a>
+        </div>
+      </div>
+    </footer>
   </body>
 </html>
