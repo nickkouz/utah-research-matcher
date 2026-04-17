@@ -85,7 +85,7 @@ async function loadResults() {
   const cached = window.sessionStorage.getItem("latestResults");
   const data = cached
     ? JSON.parse(cached)
-    : await fetch("../data/demo_results.json").then((response) => {
+    : await fetch("/data/demo_results.json").then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}`);
         }

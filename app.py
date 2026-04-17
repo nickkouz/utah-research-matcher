@@ -20,13 +20,15 @@ class AppHandler(BaseHTTPRequestHandler):
         parsed = urlparse(self.path)
         path = parsed.path
         if path == "/":
-            path = "/frontend/index.html"
+            path = "/index.html"
         elif path == "/form":
-            path = "/frontend/form.html"
+            path = "/form/index.html"
         elif path == "/results":
-            path = "/frontend/results.html"
+            path = "/results/index.html"
 
         file_path = (ROOT / path.lstrip("/")).resolve()
+        if file_path.is_dir():
+            file_path = (file_path / "index.html").resolve()
         if not str(file_path).startswith(str(ROOT)) or not file_path.is_file():
             self._send_json({"error": "Not found"}, status=HTTPStatus.NOT_FOUND)
             return
