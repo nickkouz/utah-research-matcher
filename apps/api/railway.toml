@@ -2,7 +2,7 @@
 buildCommand = "pip install -r requirements.txt"
 
 [deploy]
-startCommand = "python main.py"
+startCommand = "python -u main.py"
 healthcheckPath = "/health"
 healthcheckTimeout = 120
 restartPolicyType = "ON_FAILURE"
