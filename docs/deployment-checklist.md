@@ -40,11 +40,14 @@ Recommended first path: Railway for the API plus a pgvector-enabled Postgres ser
 3. Add a second service from your GitHub repo:
    - repo: `nickkouz/utah-research-matcher`
    - root directory: `apps/api`
-4. In the API service settings, set the start command to:
+4. In the API service settings, set the build and start commands to:
 
 ```text
-python main.py
+Build Command: pip install -r requirements.txt
+Start Command: python main.py
 ```
+
+If Railway auto-detects Python correctly, the committed `apps/api/requirements.txt` should also allow the service to install dependencies without a custom build command. Setting the build command explicitly is still the safest option.
 
 The repo now includes `apps/api/main.py`, which runs Alembic migrations on startup and then starts Uvicorn on Railway's assigned `PORT`.
 5. In the API service variables, set:
