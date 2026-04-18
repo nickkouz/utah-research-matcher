@@ -6,7 +6,10 @@ from pydantic import Field, field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-ROOT_DIR = Path(__file__).resolve().parents[4]
+CURRENT_FILE = Path(__file__).resolve()
+API_ROOT = next((parent for parent in CURRENT_FILE.parents if (parent / "pyproject.toml").exists()), CURRENT_FILE.parent)
+REPO_ROOT = API_ROOT.parent.parent if len(API_ROOT.parents) >= 2 else API_ROOT
+ENV_FILE = REPO_ROOT / ".env" if (REPO_ROOT / ".env").exists() else API_ROOT / ".env"
 
 
 class Settings(BaseSettings):
@@ -30,7 +33,7 @@ class Settings(BaseSettings):
     enable_query_persistence: bool = False
 
     model_config = SettingsConfigDict(
-        env_file=ROOT_DIR / ".env",
+        env_file=ENV_FILE,
         env_file_encoding="utf-8",
         extra="ignore",
     )
