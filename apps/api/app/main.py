@@ -3,7 +3,7 @@ from __future__ import annotations
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.routes import company, health, staff
+from app.api.routes import company, diagnostics, health, staff
 from app.core.config import settings
 
 
@@ -24,5 +24,6 @@ if cors_origins:
     )
 
 app.include_router(health.router)
+app.include_router(diagnostics.router)
 app.include_router(company.router)
 app.include_router(staff.router)

@@ -72,6 +72,7 @@ Primary endpoints:
 - `GET /staff/{id}`
 - `GET /staff/{id}/papers`
 - `GET /staff/{id}/collaborators`
+- `GET /diagnostics/summary`
 
 ## Frontend
 
@@ -126,6 +127,12 @@ alembic upgrade head
 python -m uvicorn app.main:app --reload --port 8001
 ```
 
+If your shell Python cannot find the backend dependencies reliably, set up the dedicated API virtual environment first:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\infra\scripts\setup-api-env.ps1
+```
+
 Start the web app:
 
 ```powershell
@@ -139,6 +146,13 @@ Verify the local API once it is running:
 ```powershell
 cd "C:\Users\kouze\Codex Hackathon"
 powershell -ExecutionPolicy Bypass -File .\infra\scripts\check-local-api.ps1
+```
+
+Inspect database coverage:
+
+```powershell
+Invoke-WebRequest -Uri "http://127.0.0.1:8001/diagnostics/summary" -UseBasicParsing |
+  Select-Object -ExpandProperty Content
 ```
 
 ## Next steps
@@ -169,6 +183,13 @@ python -m workers.resolve_openalex.run --limit 25
 python -m workers.ingest_papers.run --limit 25
 python -m workers.enrich_research.run --limit 25
 python -m workers.generate_embeddings.run --limit 25
+```
+
+To backfill a larger dataset into whichever database your current `DATABASE_URL` points at, use:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\infra\scripts\setup-api-env.ps1
+powershell -ExecutionPolicy Bypass -File .\infra\scripts\run-data-backfill.ps1 -ResolveLimit 250 -PaperLimit 250 -EnrichLimit 50 -EmbeddingLimit 250 -RefreshOpenAlex
 ```
 
 That sequence will:

@@ -46,8 +46,58 @@ def _load_rows(path: Path, limit: int | None) -> list[dict[str, str]]:
         reader = csv.DictReader(handle)
         rows = list(reader)
     if limit:
-        return rows[:limit]
+        return _balanced_subset(rows, limit)
     return rows
+
+
+def _balanced_subset(rows: list[dict[str, str]], limit: int) -> list[dict[str, str]]:
+    ranked = sorted(rows, key=_row_priority)
+    buckets: dict[str, list[dict[str, str]]] = {}
+    for row in ranked:
+        school = normalize_whitespace(row.get("school")) or "Unknown"
+        buckets.setdefault(school, []).append(row)
+
+    ordered_schools = sorted(
+        buckets,
+        key=lambda school: (
+            _row_priority(buckets[school][0]) if buckets[school] else (True, True, True, True, 1.0, school.lower()),
+            school.lower(),
+        ),
+    )
+
+    selected: list[dict[str, str]] = []
+    while ordered_schools and len(selected) < limit:
+        next_round: list[str] = []
+        for school in ordered_schools:
+            bucket = buckets[school]
+            if not bucket:
+                continue
+            selected.append(bucket.pop(0))
+            if len(selected) >= limit:
+                break
+            if bucket:
+                next_round.append(school)
+        ordered_schools = next_round
+
+    return selected
+
+
+def _row_priority(row: dict[str, str]) -> tuple[bool, bool, bool, bool, float, str]:
+    summary = _best_summary(row)
+    research_areas = _split_pipe_values(row.get("research_areas"))
+    methods = _split_pipe_values(row.get("methods"))
+    try:
+        quality_score = float((row.get("quality_score") or "0").strip())
+    except ValueError:
+        quality_score = 0.0
+    return (
+        _is_generic_text(summary),
+        not _has_publication_signal(row),
+        not bool(research_areas),
+        (row.get("source_type") or "").strip().lower() == "school-search-directory",
+        -quality_score,
+        normalize_whitespace(row.get("name")).lower(),
+    )
 
 
 def _upsert_staff(session, row: dict[str, str]) -> StaffRegistry:
@@ -148,9 +198,17 @@ def _eligible_for_matching(row: dict[str, str], summary: str, has_publication_si
         quality_score = float((row.get("quality_score") or "0").strip())
     except ValueError:
         quality_score = 0.0
+    research_areas = _split_pipe_values(row.get("research_areas"))
+    methods = _split_pipe_values(row.get("methods"))
+    active_signals = _split_pipe_values(row.get("active_signals"))
     if _is_generic_text(summary):
         return False
-    return bool(summary) and quality_score >= 0.75 and has_publication_signal
+    return bool(summary) and has_publication_signal and (
+        quality_score >= 0.65
+        or len(research_areas) >= 3
+        or len(methods) >= 3
+        or len(active_signals) >= 2
+    )
 
 
 def _is_generic_text(value: str | None) -> bool:

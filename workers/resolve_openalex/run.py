@@ -34,6 +34,7 @@ def main() -> None:
                 for staff in staff_rows
                 if not staff.match_profile or not staff.match_profile.openalex_author_id
             ]
+        staff_rows = sorted(staff_rows, key=_resolution_priority)
         if args.limit:
             staff_rows = staff_rows[: args.limit]
 
@@ -55,6 +56,21 @@ def main() -> None:
                 failures += 1
 
     print(f"Resolved {matched} staff profiles to OpenAlex authors. Failures: {failures}.")
+
+
+def _resolution_priority(staff: StaffRegistry) -> tuple[bool, bool, bool, bool, str]:
+    summary = ""
+    if staff.match_profile and staff.match_profile.ai_research_summary:
+        summary = staff.match_profile.ai_research_summary
+    elif staff.bio:
+        summary = staff.bio
+    return (
+        not staff.has_publication_signal,
+        not bool(summary and len(summary.split()) >= 12),
+        not bool(staff.email),
+        not bool(staff.department),
+        staff.name.lower(),
+    )
 
 
 if __name__ == "__main__":

@@ -127,3 +127,11 @@ Before deploying, confirm:
 2. the backend can interpret a company and return matches
 3. the frontend env vars point to the deployed backend URL
 4. Vercel is configured with `apps/web` as the root directory
+
+After deployment, inspect the live backend database coverage with:
+
+```text
+GET https://YOUR-RAILWAY-API-DOMAIN/diagnostics/summary
+```
+
+If the `total_by_school` or `eligible_by_school` breakdowns show only one school, run a larger backfill instead of tuning ranking first.

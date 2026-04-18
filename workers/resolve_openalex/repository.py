@@ -6,6 +6,12 @@ from app.core.config import settings
 from app.models.staff import StaffMatchProfile, StaffRegistry
 from app.services.openalex_service import OpenAlexAuthorCandidate
 
+GENERIC_SUMMARY_PHRASES = (
+    "biography and contact information",
+    "contact information for",
+    "learn more at",
+)
+
 
 def upsert_author_match(
     session: Session,
@@ -25,6 +31,18 @@ def upsert_author_match(
     session.add(profile)
 
     staff.has_publication_signal = author.works_count >= 1
-    staff.eligible_for_matching = author.works_count >= settings.minimum_publication_count
+    staff.eligible_for_matching = (
+        author.works_count >= settings.minimum_publication_count
+        and _has_meaningful_summary(staff, profile)
+    )
     session.add(staff)
     return profile
+
+
+def _has_meaningful_summary(staff: StaffRegistry, profile: StaffMatchProfile) -> bool:
+    summary = (profile.ai_research_summary or staff.bio or "").strip().lower()
+    if not summary:
+        return False
+    if any(phrase in summary for phrase in GENERIC_SUMMARY_PHRASES):
+        return False
+    return len(summary.split()) >= 12

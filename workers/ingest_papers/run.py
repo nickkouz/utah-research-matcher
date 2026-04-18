@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 
-from sqlalchemy import select
+from sqlalchemy import desc, select
 
 from workers.common.db import worker_session
 from workers.common.bootstrap import ensure_api_path
@@ -32,7 +32,12 @@ def main() -> None:
             select(StaffRegistry, StaffMatchProfile)
             .join(StaffMatchProfile, StaffRegistry.id == StaffMatchProfile.staff_id)
             .where(StaffMatchProfile.openalex_author_id.is_not(None))
-            .order_by(StaffRegistry.name.asc())
+            .order_by(
+                desc(StaffRegistry.eligible_for_matching),
+                desc(StaffMatchProfile.publication_count),
+                desc(StaffMatchProfile.citation_count_total),
+                StaffRegistry.name.asc(),
+            )
         )
         if args.staff_id:
             stmt = stmt.where(StaffRegistry.id == args.staff_id)

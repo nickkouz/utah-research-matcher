@@ -5,9 +5,10 @@ from collections import Counter
 from datetime import datetime
 import re
 
-from sqlalchemy import select
+from sqlalchemy import desc, select
 from sqlalchemy.orm import Session
 
+from app.core.config import settings
 from app.models.paper import Paper, PaperAuthor
 from app.models.staff import StaffMatchProfile, StaffRegistry
 from app.schemas.company import CompanyInterpretation
@@ -17,6 +18,11 @@ from app.services.embedding_service import company_query_embeddings
 from app.services.rerank_service import rerank_candidates
 
 TOKEN_RE = re.compile(r"[A-Za-z][A-Za-z\\-]+")
+GENERIC_PROFILE_PHRASES = (
+    "biography and contact information",
+    "contact information for",
+    "learn more at",
+)
 
 
 def match_company_to_staff(
@@ -25,15 +31,18 @@ def match_company_to_staff(
     limit: int = 8,
 ) -> list[StaffSummaryResponse]:
     summary_embedding, theme_embedding = company_query_embeddings(company)
-    rows = db.execute(
-        select(StaffRegistry, StaffMatchProfile)
-        .join(StaffMatchProfile, StaffRegistry.id == StaffMatchProfile.staff_id)
-        .where(StaffRegistry.eligible_for_matching.is_(True))
-    ).all()
+    rows = _candidate_rows(db=db, limit=limit)
 
     candidates: list[StaffSummaryResponse] = []
-    for staff, profile in rows:
-        score = _score_candidate(company, summary_embedding, theme_embedding, staff, profile)
+    for staff, profile, is_primary_candidate in rows:
+        score = _score_candidate(
+            company,
+            summary_embedding,
+            theme_embedding,
+            staff,
+            profile,
+            is_primary_candidate=is_primary_candidate,
+        )
         candidates.append(
             StaffSummaryResponse(
                 staff_id=staff.id,
@@ -59,12 +68,52 @@ def match_company_to_staff(
     return reranked[:limit]
 
 
+def _candidate_rows(
+    db: Session,
+    limit: int,
+) -> list[tuple[StaffRegistry, StaffMatchProfile, bool]]:
+    stmt = (
+        select(StaffRegistry, StaffMatchProfile)
+        .join(StaffMatchProfile, StaffRegistry.id == StaffMatchProfile.staff_id)
+        .order_by(
+            desc(StaffRegistry.eligible_for_matching),
+            desc(StaffRegistry.has_publication_signal),
+            desc(StaffMatchProfile.publication_count),
+            desc(StaffMatchProfile.citation_count_total),
+            StaffRegistry.name.asc(),
+        )
+    )
+    rows = db.execute(stmt).all()
+    primary_rows = [
+        (staff, profile, True)
+        for staff, profile in rows
+        if staff.eligible_for_matching
+    ]
+    if len(primary_rows) >= max(limit, 5):
+        return primary_rows
+
+    fallback_rows = [
+        (staff, profile, False)
+        for staff, profile in rows
+        if (not staff.eligible_for_matching)
+        and (
+            staff.has_publication_signal
+            or (profile.publication_count or 0) > 0
+            or bool(profile.last_active_year)
+        )
+    ]
+    combined = primary_rows + fallback_rows
+    return combined[: max(limit * 4, 20)]
+
+
 def _score_candidate(
     company: CompanyInterpretation,
     summary_embedding: list[float],
     theme_embedding: list[float],
     staff: StaffRegistry,
     profile: StaffMatchProfile,
+    *,
+    is_primary_candidate: bool,
 ) -> float:
     company_summary_text = company.research_need_summary
     company_theme_text = _company_theme_text(company)
@@ -87,13 +136,19 @@ def _score_candidate(
     theme_overlap = _multi_overlap(company.technical_themes, profile.technical_tags or [])
     recency = _recency(profile.last_active_year)
     school_support = _multi_overlap(company.school_affinities, staff.school_affiliations or [])
+    publication_support = _publication_support(profile)
+    eligibility_support = 1.0 if is_primary_candidate else 0.65
+    profile_quality = _profile_quality(profile)
     return (
-        (summary_similarity * 0.45)
+        (summary_similarity * 0.40)
         + (research_similarity * 0.25)
-        + (sector_overlap * 0.15)
-        + (theme_overlap * 0.10)
+        + (sector_overlap * 0.12)
+        + (theme_overlap * 0.08)
         + (recency * 0.05)
-        + (school_support * 0.05)
+        + (school_support * 0.03)
+        + (publication_support * 0.04)
+        + (eligibility_support * 0.03)
+        + (profile_quality * 0.03)
     )
 
 
@@ -135,6 +190,26 @@ def _profile_research_text(profile: StaffMatchProfile) -> str:
             ],
         )
     )
+
+
+def _publication_support(profile: StaffMatchProfile) -> float:
+    publication_count = profile.publication_count or 0
+    citation_count = profile.citation_count_total or 0
+    publication_score = min(publication_count / max(settings.minimum_publication_count * 4, 1), 1.0)
+    citation_score = min(citation_count / 250.0, 1.0)
+    return (publication_score * 0.6) + (citation_score * 0.4)
+
+
+def _profile_quality(profile: StaffMatchProfile) -> float:
+    summary = (profile.ai_research_summary or "").strip().lower()
+    if not summary:
+        return 0.0
+    if any(phrase in summary for phrase in GENERIC_PROFILE_PHRASES):
+        return 0.1
+    word_count = len(summary.split())
+    if word_count < 12:
+        return 0.3
+    return 1.0
 
 
 def _collaborators(db: Session, staff_id: str) -> list[CollaboratorSummary]:
@@ -180,9 +255,10 @@ def _collaborators(db: Session, staff_id: str) -> list[CollaboratorSummary]:
 
 def _match_reason(company: CompanyInterpretation, staff: StaffRegistry, profile: StaffMatchProfile) -> str:
     school_text = ", ".join(staff.school_affiliations or ([staff.primary_school] if staff.primary_school else []))
+    leading_tags = (profile.technical_tags or [])[:3] or (profile.research_keywords or [])[:3]
     return (
         f"{staff.name} is relevant for {company.company_name} because their research aligns with "
-        f"{company.primary_sector.lower()} themes such as {', '.join((profile.technical_tags or [])[:3]) or 'adjacent technical work'}. "
+        f"{company.primary_sector.lower()} themes such as {', '.join(leading_tags) or 'adjacent technical work'}. "
         f"They are affiliated with {school_text or 'the University of Utah'} and have recent research activity in this area."
     )
 
@@ -265,7 +341,11 @@ def _overlap(value: str, items: list[str]) -> float:
     if not lowered or not items:
         return 0.0
     normalized = {item.lower() for item in items}
-    return 1.0 if lowered in normalized else 0.0
+    if lowered in normalized:
+        return 1.0
+    if any(lowered in item or item in lowered for item in normalized):
+        return 0.6
+    return 0.0
 
 
 def _multi_overlap(left: list[str], right: list[str]) -> float:
@@ -275,7 +355,14 @@ def _multi_overlap(left: list[str], right: list[str]) -> float:
     right_norm = {item.strip().lower() for item in right if item.strip()}
     if not left_norm or not right_norm:
         return 0.0
-    return len(left_norm & right_norm) / len(left_norm | right_norm)
+    exact = left_norm & right_norm
+    fuzzy = {
+        left_item
+        for left_item in left_norm
+        for right_item in right_norm
+        if left_item in right_item or right_item in left_item
+    }
+    return len(exact | fuzzy) / len(left_norm | right_norm)
 
 
 def _recency(last_active_year: int | None) -> float:
