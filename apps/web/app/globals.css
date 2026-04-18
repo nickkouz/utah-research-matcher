@@ -66,6 +66,10 @@ a {
   padding: 4rem 0 2rem;
 }
 
+.compact-hero {
+  padding-bottom: 1rem;
+}
+
 .hero h1,
 .section-title {
   margin: 0 0 1rem;
@@ -171,6 +175,16 @@ a {
   font-weight: 600;
 }
 
+.checkbox-row {
+  display: flex !important;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.checkbox-row input {
+  width: auto;
+}
+
 .search-form input,
 .search-form textarea,
 .search-form select,
@@ -254,6 +268,13 @@ a {
   margin-top: 1rem;
 }
 
+.browser-stats {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+}
+
 .mini-evidence-item {
   padding: 0.8rem 0.95rem;
   border-radius: 16px;
@@ -309,6 +330,11 @@ a {
 
 .detail-layout {
   grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+}
+
+.neutral-pill {
+  color: #4a4340;
+  background: #ece6e0;
 }
 
 @media (max-width: 900px) {

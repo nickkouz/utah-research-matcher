@@ -31,6 +31,30 @@ class StaffSummaryResponse(BaseModel):
     further_contacts: list[CollaboratorSummary] = Field(default_factory=list)
 
 
+class StaffBrowseItem(BaseModel):
+    staff_id: str
+    name: str
+    title: str | None = None
+    profile_url: str
+    image_url: str | None = None
+    lab_url: str | None = None
+    primary_school: str | None = None
+    school_affiliations: list[str] = Field(default_factory=list)
+    department: str | None = None
+    ai_research_summary: str
+    publication_count: int = 0
+    citation_count_total: int = 0
+    last_active_year: int | None = None
+    eligible_for_matching: bool = False
+    has_publication_signal: bool = False
+
+
+class StaffBrowseResponse(BaseModel):
+    total: int
+    available_schools: list[str] = Field(default_factory=list)
+    items: list[StaffBrowseItem] = Field(default_factory=list)
+
+
 class StaffDetailResponse(BaseModel):
     staff_id: str
     name: str

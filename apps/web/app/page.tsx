@@ -1,4 +1,5 @@
 import { SearchForm } from "@/components/search-form";
+import Link from "next/link";
 
 
 export default function HomePage() {
@@ -53,6 +54,11 @@ export default function HomePage() {
                   <strong>OpenAlex</strong>
                   <div className="muted">Publication lists, citation counts, authorship data, and external paper links.</div>
                 </div>
+              </div>
+              <div className="cta-row">
+                <Link className="button-secondary" href="/researchers">
+                  Browse Researcher Directory
+                </Link>
               </div>
             </div>
           </div>

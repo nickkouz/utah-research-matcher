@@ -7,7 +7,13 @@ from sqlalchemy.orm import Session
 from app.models.paper import Paper, PaperAuthor
 from app.models.staff import StaffMatchProfile, StaffRegistry
 from app.schemas.paper import PaperListResponse, PaperSummary
-from app.schemas.staff import CollaboratorResponse, CollaboratorSummary, StaffDetailResponse
+from app.schemas.staff import (
+    CollaboratorResponse,
+    CollaboratorSummary,
+    StaffBrowseItem,
+    StaffBrowseResponse,
+    StaffDetailResponse,
+)
 
 
 def get_staff_detail(db: Session, staff_id: str) -> StaffDetailResponse:
@@ -53,6 +59,98 @@ def get_staff_papers(
     offset: int,
 ) -> PaperListResponse:
     return _paper_query(db, staff_id=staff_id, search=search, sort=sort, limit=limit, offset=offset)
+
+
+def browse_staff(
+    db: Session,
+    *,
+    search: str | None,
+    school: str | None,
+    department: str | None,
+    eligible_only: bool,
+    sort: str,
+    limit: int,
+    offset: int,
+) -> StaffBrowseResponse:
+    stmt = (
+        select(StaffRegistry, StaffMatchProfile)
+        .join(StaffMatchProfile, StaffRegistry.id == StaffMatchProfile.staff_id, isouter=True)
+    )
+    available_schools = _available_schools(db)
+
+    if eligible_only:
+        stmt = stmt.where(StaffRegistry.eligible_for_matching.is_(True))
+    if school:
+        stmt = stmt.where(StaffRegistry.primary_school == school)
+    if department:
+        query = f"%{department}%"
+        stmt = stmt.where(StaffRegistry.department.ilike(query))
+    if search:
+        query = f"%{search}%"
+        stmt = stmt.where(
+            or_(
+                StaffRegistry.name.ilike(query),
+                StaffRegistry.department.ilike(query),
+                StaffRegistry.primary_school.ilike(query),
+                StaffRegistry.bio.ilike(query),
+                StaffMatchProfile.ai_research_summary.ilike(query),
+            )
+        )
+
+    if sort == "citations":
+        stmt = stmt.order_by(
+            desc(StaffRegistry.eligible_for_matching),
+            desc(StaffMatchProfile.citation_count_total),
+            desc(StaffMatchProfile.publication_count),
+            StaffRegistry.name.asc(),
+        )
+    elif sort == "papers":
+        stmt = stmt.order_by(
+            desc(StaffRegistry.eligible_for_matching),
+            desc(StaffMatchProfile.publication_count),
+            desc(StaffMatchProfile.citation_count_total),
+            StaffRegistry.name.asc(),
+        )
+    elif sort == "recent":
+        stmt = stmt.order_by(
+            desc(StaffRegistry.eligible_for_matching),
+            desc(StaffMatchProfile.last_active_year),
+            desc(StaffMatchProfile.publication_count),
+            StaffRegistry.name.asc(),
+        )
+    else:
+        stmt = stmt.order_by(
+            desc(StaffRegistry.eligible_for_matching),
+            StaffRegistry.name.asc(),
+        )
+
+    total_stmt = (
+        select(func.count(StaffRegistry.id))
+        .join(StaffMatchProfile, StaffRegistry.id == StaffMatchProfile.staff_id, isouter=True)
+    )
+    if eligible_only:
+        total_stmt = total_stmt.where(StaffRegistry.eligible_for_matching.is_(True))
+    if school:
+        total_stmt = total_stmt.where(StaffRegistry.primary_school == school)
+    if department:
+        query = f"%{department}%"
+        total_stmt = total_stmt.where(StaffRegistry.department.ilike(query))
+    if search:
+        query = f"%{search}%"
+        total_stmt = total_stmt.where(
+            or_(
+                StaffRegistry.name.ilike(query),
+                StaffRegistry.department.ilike(query),
+                StaffRegistry.primary_school.ilike(query),
+                StaffRegistry.bio.ilike(query),
+                StaffMatchProfile.ai_research_summary.ilike(query),
+            )
+        )
+
+    total = int(db.execute(total_stmt).scalar_one())
+    rows = db.execute(stmt.offset(offset).limit(limit)).all()
+    items = [_to_staff_browse_item(staff, profile) for staff, profile in rows]
+    return StaffBrowseResponse(total=total, available_schools=available_schools, items=items)
 
 
 def get_staff_collaborators(db: Session, staff_id: str) -> CollaboratorResponse:
@@ -152,3 +250,33 @@ def _detail_outreach_points(staff: StaffRegistry, profile: StaffMatchProfile | N
     if profile and profile.technical_tags:
         points.append(f"Mention overlap in {', '.join(profile.technical_tags[:3])}.")
     return points
+
+
+def _available_schools(db: Session) -> list[str]:
+    rows = db.execute(
+        select(StaffRegistry.primary_school)
+        .where(StaffRegistry.primary_school.is_not(None))
+        .distinct()
+        .order_by(StaffRegistry.primary_school.asc())
+    ).scalars().all()
+    return [school for school in rows if school]
+
+
+def _to_staff_browse_item(staff: StaffRegistry, profile: StaffMatchProfile | None) -> StaffBrowseItem:
+    return StaffBrowseItem(
+        staff_id=staff.id,
+        name=staff.name,
+        title=staff.title,
+        profile_url=staff.profile_url,
+        image_url=staff.image_url,
+        lab_url=staff.lab_url,
+        primary_school=staff.primary_school,
+        school_affiliations=staff.school_affiliations or [],
+        department=staff.department,
+        ai_research_summary=profile.ai_research_summary if profile else (staff.bio or "Research summary not available yet."),
+        publication_count=profile.publication_count if profile and profile.publication_count else 0,
+        citation_count_total=profile.citation_count_total if profile and profile.citation_count_total else 0,
+        last_active_year=profile.last_active_year if profile else None,
+        eligible_for_matching=staff.eligible_for_matching,
+        has_publication_signal=staff.has_publication_signal,
+    )
