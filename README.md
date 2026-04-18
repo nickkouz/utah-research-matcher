@@ -221,6 +221,37 @@ When the database is filled correctly:
 - `/diagnostics/summary` should show broad school coverage
 - company search should stop collapsing onto a tiny subset of faculty
 
+## Weekly sync
+
+The repo now includes a weekly sync wrapper and a GitHub Actions workflow so the research layer can keep growing after the first backfill:
+
+- local/manual wrapper: `infra/scripts/run-weekly-sync.ps1`
+- GitHub Actions workflow: `.github/workflows/weekly-research-sync.yml`
+
+The weekly sync is designed to:
+
+1. refresh the staff registry from the CSV
+2. resolve more staff to OpenAlex authors
+3. ingest newly available papers
+4. enrich newly changed records
+5. generate embeddings for newly changed records
+
+To run it manually against a target database:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\infra\scripts\run-weekly-sync.ps1 `
+  -DatabaseUrl "postgresql+psycopg://USER:PASSWORD@HOST:PORT/DBNAME"
+```
+
+To run it automatically in GitHub Actions, add these repository secrets:
+
+- `DATABASE_URL`
+- `OPENAI_API_KEY`
+- `OPENALEX_API_KEY`
+- `OPENALEX_CONTACT_EMAIL`
+
+The workflow runs every Monday and can also be triggered manually with `workflow_dispatch`.
+
 That sequence will:
 
 1. pull people from `profiles.faculty.utah.edu` into `staff_registry`

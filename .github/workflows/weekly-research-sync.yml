@@ -1,0 +1,70 @@
+name: Weekly Research Sync
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 12 * * 1"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      OPENAI_GENERATION_MODEL: gpt-5-mini
+      OPENAI_EMBEDDING_MODEL: text-embedding-3-small
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      OPENALEX_API_KEY: ${{ secrets.OPENALEX_API_KEY }}
+      OPENALEX_CONTACT_EMAIL: ${{ secrets.OPENALEX_CONTACT_EMAIL }}
+      PROFILES_BASE_URL: https://profiles.faculty.utah.edu
+      PROFILES_SEED_URLS: https://profiles.faculty.utah.edu
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install API dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r apps/api/requirements.txt
+          python -m pip install -e apps/api
+
+      - name: Import staff registry
+        run: python -m workers.import_csv.run --csv-path data/raw/faculty_db.csv
+
+      - name: Resolve OpenAlex authors
+        run: python -m workers.resolve_openalex.run --limit 500
+
+      - name: Ingest papers
+        run: python -m workers.ingest_papers.run --limit 500
+
+      - name: Enrich changed records
+        run: python -m workers.enrich_research.run --limit 100
+
+      - name: Generate embeddings
+        run: python -m workers.generate_embeddings.run --limit 500
+
+      - name: Print diagnostics snapshot
+        run: |
+          python - <<'PY'
+          from sqlalchemy import create_engine, text
+          from app.core.config import settings
+
+          engine = create_engine(settings.database_url)
+          with engine.connect() as conn:
+              queries = {
+                  "staff_registry": "SELECT COUNT(*) FROM staff_registry",
+                  "staff_match_profiles": "SELECT COUNT(*) FROM staff_match_profiles",
+                  "staff_with_publication_signal": "SELECT COUNT(*) FROM staff_registry WHERE has_publication_signal = true",
+                  "eligible_staff": "SELECT COUNT(*) FROM staff_registry WHERE eligible_for_matching = true",
+                  "openalex_resolved_profiles": "SELECT COUNT(*) FROM staff_match_profiles WHERE openalex_author_id IS NOT NULL",
+                  "profiles_with_papers": "SELECT COUNT(DISTINCT staff_id) FROM papers",
+                  "papers": "SELECT COUNT(*) FROM papers",
+                  "paper_authors": "SELECT COUNT(*) FROM paper_authors",
+              }
+              for label, sql in queries.items():
+                  print(f"{label}: {conn.execute(text(sql)).scalar_one()}")
+          PY
