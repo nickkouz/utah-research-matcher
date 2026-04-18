@@ -1,0 +1,17 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg17
+    container_name: utah-research-matcher-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: utah_research_matcher
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - utah_research_matcher_pgdata:/var/lib/postgresql/data
+
+volumes:
+  utah_research_matcher_pgdata:
+

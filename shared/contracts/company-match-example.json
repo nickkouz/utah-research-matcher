@@ -1,0 +1,12 @@
+{
+  "company_name": "Example Public Company",
+  "ticker": "EXM",
+  "company_description": "Example Public Company builds workflow software and machine learning tools for healthcare operations.",
+  "interpreted_company": {
+    "primary_sector": "Healthcare Technology",
+    "subsector": "Clinical Workflow Software",
+    "technical_themes": ["machine learning", "data systems", "clinical workflow"],
+    "school_affinities": ["School of Medicine", "College of Engineering"]
+  }
+}
+

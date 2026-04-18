@@ -5,3 +5,9 @@ __pycache__/
 data/scraped_faculty.json
 *.log
 Thumbs.db
+apps/web/node_modules/
+apps/web/.next/
+apps/web/out/
+apps/api/.venv/
+.pytest_cache/
+.ruff_cache/
