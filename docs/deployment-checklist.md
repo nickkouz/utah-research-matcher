@@ -31,6 +31,38 @@ Notes:
 
 Deploy `apps/api` separately on a Python-friendly platform such as Railway, Render, or Fly.
 
+Recommended first path: Railway for the API plus a pgvector-enabled Postgres service.
+
+### Railway backend steps
+
+1. Create a new Railway project.
+2. Add a **pgvector Postgres** service, not plain Postgres.
+3. Add a second service from your GitHub repo:
+   - repo: `nickkouz/utah-research-matcher`
+   - root directory: `apps/api`
+4. In the API service settings, set the start command to:
+
+```text
+python main.py
+```
+
+The repo now includes `apps/api/main.py`, which runs Alembic migrations on startup and then starts Uvicorn on Railway's assigned `PORT`.
+5. In the API service variables, set:
+   - `OPENAI_API_KEY`
+   - `OPENAI_GENERATION_MODEL=gpt-5-mini`
+   - `OPENAI_EMBEDDING_MODEL=text-embedding-3-small`
+   - `OPENALEX_API_KEY`
+   - `OPENALEX_CONTACT_EMAIL`
+   - `PROFILES_BASE_URL=https://profiles.faculty.utah.edu`
+   - `PROFILES_SEED_URLS=https://profiles.faculty.utah.edu`
+   - `CORS_ALLOWED_ORIGINS=https://YOUR-VERCEL-DOMAIN`
+6. Set `DATABASE_URL` on the API service to the connection string from the pgvector Postgres service.
+7. Generate a public domain for the API service in Railway networking.
+8. Copy that public API URL into the Vercel frontend env vars:
+   - `NEXT_PUBLIC_API_BASE_URL=https://YOUR-RAILWAY-API-DOMAIN`
+   - `API_BASE_URL=https://YOUR-RAILWAY-API-DOMAIN`
+9. Redeploy the Vercel frontend after the env vars are updated.
+
 Backend environment variables:
 
 - `OPENAI_API_KEY`
@@ -41,6 +73,7 @@ Backend environment variables:
 - `DATABASE_URL`
 - `PROFILES_BASE_URL=https://profiles.faculty.utah.edu`
 - `PROFILES_SEED_URLS=https://profiles.faculty.utah.edu`
+- `CORS_ALLOWED_ORIGINS`
 
 The backend needs a Postgres database with the `vector` extension enabled.
 

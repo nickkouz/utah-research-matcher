@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     app_name: str = "Utah Research Matcher API"
     environment: str = "development"
     database_url: str = "postgresql+psycopg://postgres:postgres@localhost:5432/utah_research_matcher"
+    cors_allowed_origins_raw: str = Field(default="*", alias="CORS_ALLOWED_ORIGINS")
     openai_api_key: str | None = None
     openai_generation_model: str = "gpt-5-mini"
     openai_embedding_model: str = "text-embedding-3-small"
@@ -39,6 +40,14 @@ class Settings(BaseSettings):
         return [
             value.strip()
             for value in self.profiles_seed_urls_raw.split(",")
+            if value.strip()
+        ]
+
+    @property
+    def cors_allowed_origins(self) -> list[str]:
+        return [
+            value.strip()
+            for value in self.cors_allowed_origins_raw.split(",")
             if value.strip()
         ]
 
