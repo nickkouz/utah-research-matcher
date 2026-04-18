@@ -35,18 +35,22 @@ def main() -> None:
         failures = 0
         for staff, profile in rows:
             try:
-                papers = session.execute(
-                    select(Paper).where(Paper.staff_id == staff.id).order_by(Paper.year.desc().nullslast())
-                ).scalars().all()
-                profile.embedding_summary = embed_text(build_staff_summary_text(staff, profile))
-                profile.embedding_research = embed_text(build_staff_research_text(profile, papers))
-                session.add(profile)
+                with session.begin_nested():
+                    papers = session.execute(
+                        select(Paper).where(Paper.staff_id == staff.id).order_by(Paper.year.desc().nullslast())
+                    ).scalars().all()
+                    summary_embedding = embed_text(build_staff_summary_text(staff, profile))
+                    research_embedding = embed_text(build_staff_research_text(profile, papers))
+                    profile.embedding_summary = summary_embedding or None
+                    profile.embedding_research = research_embedding or None
+                    session.add(profile)
 
-                paper_texts = [build_paper_embedding_text(paper) for paper in papers]
-                paper_embeddings = embed_texts(paper_texts)
-                for paper, embedding in zip(papers, paper_embeddings):
-                    paper.embedding_paper = embedding or None
-                    session.add(paper)
+                    paper_texts = [build_paper_embedding_text(paper) for paper in papers]
+                    paper_embeddings = embed_texts(paper_texts)
+                    for paper, embedding in zip(papers, paper_embeddings):
+                        paper.embedding_paper = embedding or None
+                        session.add(paper)
+                    session.flush()
             except Exception:
                 failures += 1
 

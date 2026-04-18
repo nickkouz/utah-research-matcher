@@ -18,6 +18,8 @@ def upsert_staff_profiles(session: Session, profiles: list[ParsedStaffProfile]) 
             "title": profile.title,
             "email": profile.email,
             "profile_url": profile.profile_url,
+            "image_url": profile.image_url,
+            "lab_url": profile.lab_url,
             "bio": profile.bio,
             "primary_school": profile.primary_school,
             "school_affiliations": profile.school_affiliations,
@@ -35,6 +37,8 @@ def upsert_staff_profiles(session: Session, profiles: list[ParsedStaffProfile]) 
             "title": stmt.excluded.title,
             "email": stmt.excluded.email,
             "profile_url": stmt.excluded.profile_url,
+            "image_url": stmt.excluded.image_url,
+            "lab_url": stmt.excluded.lab_url,
             "bio": stmt.excluded.bio,
             "primary_school": stmt.excluded.primary_school,
             "school_affiliations": stmt.excluded.school_affiliations,
@@ -44,4 +48,3 @@ def upsert_staff_profiles(session: Session, profiles: list[ParsedStaffProfile]) 
     )
     session.execute(stmt)
     return len(values)
-

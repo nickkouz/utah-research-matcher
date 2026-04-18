@@ -1,5 +1,6 @@
 import "./globals.css";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 
 
@@ -17,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <header className="topbar">
             <div className="topbar-inner">
               <Link href="/" className="brand-mark">
-                <span className="brand-badge">U</span>
+                <Image src="/utah-logo.png" alt="University of Utah" width={40} height={40} />
                 <span>Utah Research Matcher</span>
               </Link>
               <nav className="topnav">
@@ -32,4 +33,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
-

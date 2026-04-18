@@ -34,6 +34,8 @@ export type StaffSummaryResponse = {
   staff_id: string;
   name: string;
   title?: string | null;
+  image_url?: string | null;
+  lab_url?: string | null;
   primary_school?: string | null;
   school_affiliations: string[];
   department?: string | null;
@@ -50,4 +52,3 @@ export type CompanyMatchResponse = {
   company: CompanyInterpretation;
   matches: StaffSummaryResponse[];
 };
-

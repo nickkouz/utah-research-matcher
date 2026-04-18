@@ -88,6 +88,7 @@ Planned product pages:
 The offline data pipeline now belongs in `workers/`:
 
 - `ingest_profiles`
+- `import_csv`
 - `resolve_openalex`
 - `ingest_papers`
 - `enrich_research`
@@ -133,6 +134,13 @@ npm install
 npm run dev
 ```
 
+Verify the local API once it is running:
+
+```powershell
+cd "C:\Users\kouze\Codex Hackathon"
+powershell -ExecutionPolicy Bypass -File .\infra\scripts\check-local-api.ps1
+```
+
 ## Next steps
 
 1. Stand up Postgres with `pgvector`
@@ -143,6 +151,7 @@ npm run dev
 6. Wire the Next.js frontend to the live FastAPI backend
 
 See `docs/replatform-architecture.md` for the current replatform notes.
+See `docs/deployment-checklist.md` for the split frontend/backend deployment setup.
 
 ## Worker pipeline
 
@@ -155,6 +164,7 @@ alembic upgrade head
 
 Set-Location ..\..
 python -m workers.ingest_profiles.run --limit 25
+python -m workers.import_csv.run --csv-path data/raw/faculty_db.csv --limit 100
 python -m workers.resolve_openalex.run --limit 25
 python -m workers.ingest_papers.run --limit 25
 python -m workers.enrich_research.run --limit 25
@@ -164,7 +174,8 @@ python -m workers.generate_embeddings.run --limit 25
 That sequence will:
 
 1. pull people from `profiles.faculty.utah.edu` into `staff_registry`
-2. resolve publication-backed researchers through OpenAlex
-3. ingest all available papers for matched researchers
-4. generate summaries and tags
-5. write pgvector embeddings for retrieval
+2. optionally bootstrap existing staff metadata from `faculty_db.csv`
+3. resolve publication-backed researchers through OpenAlex
+4. ingest all available papers for matched researchers
+5. generate summaries and tags
+6. write pgvector embeddings for retrieval

@@ -29,6 +29,8 @@ def get_staff_detail(db: Session, staff_id: str) -> StaffDetailResponse:
         title=staff.title,
         email=staff.email,
         profile_url=staff.profile_url,
+        image_url=staff.image_url,
+        lab_url=staff.lab_url,
         primary_school=staff.primary_school,
         school_affiliations=staff.school_affiliations or [],
         department=staff.department,
@@ -71,9 +73,9 @@ def _paper_query(
         stmt = stmt.where(or_(Paper.title.ilike(query), Paper.abstract.ilike(query), Paper.ai_summary.ilike(query)))
 
     if sort == "cited":
-        stmt = stmt.order_by(desc(Paper.citation_count), desc(Paper.year))
+        stmt = stmt.order_by(desc(Paper.is_top_cited), desc(Paper.citation_count), desc(Paper.year))
     else:
-        stmt = stmt.order_by(desc(Paper.year), desc(Paper.citation_count))
+        stmt = stmt.order_by(desc(Paper.is_recent), desc(Paper.year), desc(Paper.citation_count))
 
     total = _paper_count(db, staff_id, search)
     papers = db.execute(stmt.offset(offset).limit(limit)).scalars().all()

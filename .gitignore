@@ -11,3 +11,4 @@ apps/web/out/
 apps/api/.venv/
 .pytest_cache/
 .ruff_cache/
+*.egg-info/

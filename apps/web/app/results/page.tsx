@@ -75,15 +75,47 @@ export default async function ResultsPage({
         </div>
       </section>
       <section className="section">
-        <div className="card-grid dashboard-grid">
-          {data.matches.map((match) => (
-            <ResearcherCard
-              key={match.staff_id}
-              researcher={match}
-              companyName={data.company.company_name}
-            />
-          ))}
+        <div className="split">
+          <div className="card">
+            <h2 className="section-title">Company Interpretation</h2>
+            <p className="muted">Primary sector: {data.company.primary_sector}</p>
+            <p className="muted">Confidence: {data.company.confidence}</p>
+            <p className="muted">Matches returned: {data.matches.length}</p>
+            <div className="pill-row">
+              {data.company.technical_themes.map((theme) => (
+                <span key={theme} className="pill">
+                  {theme}
+                </span>
+              ))}
+            </div>
+          </div>
+          <div className="card">
+            <h2 className="section-title">How to read these matches</h2>
+            <p className="muted">
+              The top cards balance embedding similarity, research themes, publication evidence, and recency. Open the researcher detail page to inspect the full paper corpus and collaborator context before reaching out.
+            </p>
+          </div>
         </div>
+      </section>
+      <section className="section">
+        {data.matches.length ? (
+          <div className="card-grid dashboard-grid">
+            {data.matches.map((match) => (
+              <ResearcherCard
+                key={match.staff_id}
+                researcher={match}
+                companyName={data.company.company_name}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="card">
+            <h2 className="section-title">No strong researcher matches yet</h2>
+            <p className="muted">
+              Try adding more technical detail about the company&rsquo;s products, workflows, or underlying methods so the embedding step has more research signal to work with.
+            </p>
+          </div>
+        )}
       </section>
     </>
   );

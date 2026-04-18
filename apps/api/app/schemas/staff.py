@@ -17,6 +17,8 @@ class StaffSummaryResponse(BaseModel):
     staff_id: str
     name: str
     title: str | None = None
+    image_url: str | None = None
+    lab_url: str | None = None
     primary_school: str | None = None
     school_affiliations: list[str] = Field(default_factory=list)
     department: str | None = None
@@ -35,6 +37,8 @@ class StaffDetailResponse(BaseModel):
     title: str | None = None
     email: str | None = None
     profile_url: str
+    image_url: str | None = None
+    lab_url: str | None = None
     primary_school: str | None = None
     school_affiliations: list[str] = Field(default_factory=list)
     department: str | None = None
@@ -50,4 +54,3 @@ class StaffDetailResponse(BaseModel):
 class CollaboratorResponse(BaseModel):
     staff_id: str
     collaborators: list[CollaboratorSummary] = Field(default_factory=list)
-

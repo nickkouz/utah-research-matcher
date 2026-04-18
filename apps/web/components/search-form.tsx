@@ -9,12 +9,16 @@ export function SearchForm() {
   const [companyName, setCompanyName] = useState("");
   const [ticker, setTicker] = useState("");
   const [description, setDescription] = useState("");
+  const descriptionLength = description.trim().length;
+  const descriptionReady = descriptionLength >= 40;
 
   function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const trimmedCompanyName = companyName.trim();
+    const trimmedDescription = description.trim();
     const params = new URLSearchParams({
-      company_name: companyName,
-      company_description: description,
+      company_name: trimmedCompanyName,
+      company_description: trimmedDescription,
     });
     if (ticker.trim()) {
       params.set("ticker", ticker.trim());
@@ -47,15 +51,26 @@ export function SearchForm() {
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           placeholder="Describe what the company does, what products it makes, and what technical or market problems it works on."
+          minLength={40}
           required
         />
       </label>
+      <div className="form-help">
+        <strong>Better input leads to better matches.</strong>
+        <p className="muted">
+          Include the company&rsquo;s products, technical stack, customer problems, and the sector it operates in.
+        </p>
+        <div className="pill-row">
+          <span className="pill">Example: digital therapeutics platform for chronic disease monitoring</span>
+          <span className="pill">Example: grid software for battery dispatch and energy forecasting</span>
+        </div>
+        <p className="muted">Description length: {descriptionLength} characters</p>
+      </div>
       <div className="cta-row">
-        <button className="button" type="submit">
+        <button className="button" type="submit" disabled={!companyName.trim() || !descriptionReady}>
           Find Utah Researchers
         </button>
       </div>
     </form>
   );
 }
-

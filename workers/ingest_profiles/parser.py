@@ -19,6 +19,8 @@ class ParsedStaffProfile:
     title: str | None
     email: str | None
     profile_url: str
+    image_url: str | None
+    lab_url: str | None
     bio: str | None
     primary_school: str | None
     school_affiliations: list[str]
@@ -43,6 +45,8 @@ def parse_profile_html(html: str, profile_url: str) -> ParsedStaffProfile | None
         title=title,
         email=email,
         profile_url=profile_url,
+        image_url=_extract_image_url(soup),
+        lab_url=_extract_lab_url(soup, profile_url),
         bio=bio,
         primary_school=schools[0] if schools else None,
         school_affiliations=schools,
@@ -113,6 +117,27 @@ def _extract_bio(soup: BeautifulSoup) -> str | None:
     if not paragraphs:
         return None
     return max(paragraphs, key=len)
+
+
+def _extract_image_url(soup: BeautifulSoup) -> str | None:
+    meta = soup.select_one("meta[property='og:image']")
+    if meta and meta.get("content"):
+        return normalize_whitespace(meta.get("content"))
+    image = soup.select_one("img[src]")
+    if image and image.get("src"):
+        return normalize_whitespace(image.get("src"))
+    return None
+
+
+def _extract_lab_url(soup: BeautifulSoup, profile_url: str) -> str | None:
+    for link in soup.select("a[href]"):
+        href = normalize_whitespace(link.get("href"))
+        text = normalize_whitespace(link.get_text(" ", strip=True)).lower()
+        if not href or href == profile_url:
+            continue
+        if any(token in text for token in ("lab", "research group", "center", "institute", "project")):
+            return href
+    return None
 
 
 def _extract_school_affiliations(soup: BeautifulSoup) -> list[str]:

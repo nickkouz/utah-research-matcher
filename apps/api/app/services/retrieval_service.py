@@ -39,6 +39,8 @@ def match_company_to_staff(
                 staff_id=staff.id,
                 name=staff.name,
                 title=staff.title,
+                image_url=staff.image_url,
+                lab_url=staff.lab_url,
                 primary_school=staff.primary_school,
                 school_affiliations=staff.school_affiliations or [],
                 department=staff.department,
@@ -71,13 +73,13 @@ def _score_candidate(
 
     summary_similarity = _semantic_similarity(
         summary_embedding,
-        profile.embedding_summary or [],
+        _vector_values(profile.embedding_summary),
         company_summary_text,
         profile_summary_text,
     )
     research_similarity = _semantic_similarity(
         theme_embedding,
-        profile.embedding_research or [],
+        _vector_values(profile.embedding_research),
         company_theme_text,
         profile_research_text,
     )
@@ -98,9 +100,9 @@ def _score_candidate(
 def _paper_summaries(db: Session, staff_id: str, recent: bool = False, cited: bool = False) -> list[PaperSummary]:
     stmt = select(Paper).where(Paper.staff_id == staff_id)
     if recent:
-        stmt = stmt.order_by(Paper.year.desc().nullslast(), Paper.citation_count.desc())
+        stmt = stmt.order_by(Paper.is_recent.desc(), Paper.year.desc().nullslast(), Paper.citation_count.desc())
     elif cited:
-        stmt = stmt.order_by(Paper.citation_count.desc(), Paper.year.desc().nullslast())
+        stmt = stmt.order_by(Paper.is_top_cited.desc(), Paper.citation_count.desc(), Paper.year.desc().nullslast())
     else:
         stmt = stmt.order_by(Paper.year.desc().nullslast())
     papers = db.execute(stmt.limit(3)).scalars().all()
@@ -223,6 +225,20 @@ def _semantic_similarity(
     if vector_score > 0:
         return vector_score
     return _jaccard(left_text, right_text)
+
+
+def _vector_values(value: object | None) -> list[float]:
+    if value is None:
+        return []
+    if isinstance(value, list):
+        return value
+    tolist = getattr(value, "tolist", None)
+    if callable(tolist):
+        converted = tolist()
+        if isinstance(converted, list):
+            return converted
+        return list(converted)
+    return list(value)
 
 
 def _cosine(left: list[float], right: list[float]) -> float:

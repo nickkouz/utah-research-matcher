@@ -22,6 +22,8 @@ def upgrade() -> None:
         sa.Column("title", sa.Text()),
         sa.Column("email", sa.Text()),
         sa.Column("profile_url", sa.Text(), nullable=False),
+        sa.Column("image_url", sa.Text()),
+        sa.Column("lab_url", sa.Text()),
         sa.Column("bio", sa.Text()),
         sa.Column("primary_school", sa.Text()),
         sa.Column("school_affiliations", sa.ARRAY(sa.Text()), nullable=False, server_default=sa.text("'{}'")),

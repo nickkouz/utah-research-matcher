@@ -20,20 +20,39 @@ export default function HomePage() {
       <section className="section">
         <div className="split">
           <SearchForm />
-          <div className="card">
-            <h2 className="section-title">What the new platform is optimizing for</h2>
-            <div className="metric-list">
-              <div className="metric">
-                <strong>Embedding-first retrieval</strong>
-                <div className="muted">Company vectors match against precomputed researcher vectors.</div>
+          <div className="results-layout">
+            <div className="card">
+              <h2 className="section-title">What the new platform is optimizing for</h2>
+              <div className="metric-list">
+                <div className="metric">
+                  <strong>Embedding-first retrieval</strong>
+                  <div className="muted">Company vectors match against precomputed researcher vectors.</div>
+                </div>
+                <div className="metric">
+                  <strong>Publication-backed evidence</strong>
+                  <div className="muted">All papers come from the OpenAlex-backed research layer.</div>
+                </div>
+                <div className="metric">
+                  <strong>Actionable researcher profiles</strong>
+                  <div className="muted">Recent papers, most cited work, links, and outreach guidance.</div>
+                </div>
+                <div className="metric">
+                  <strong>All-school coverage, publication-first matching</strong>
+                  <div className="muted">The registry can grow to all U researchers, but the ranking stays focused on people with enough publication signal to support a strong match.</div>
+                </div>
               </div>
-              <div className="metric">
-                <strong>Publication-backed evidence</strong>
-                <div className="muted">All papers come from the OpenAlex-backed research layer.</div>
-              </div>
-              <div className="metric">
-                <strong>Actionable researcher profiles</strong>
-                <div className="muted">Recent papers, most cited work, links, and outreach guidance.</div>
+            </div>
+            <div className="card">
+              <h2 className="section-title">Data sources in this rebuild</h2>
+              <div className="metric-list">
+                <div className="metric">
+                  <strong>Utah profiles and faculty CSV</strong>
+                  <div className="muted">Identity, affiliation, profile links, headshots, and existing roster metadata.</div>
+                </div>
+                <div className="metric">
+                  <strong>OpenAlex</strong>
+                  <div className="muted">Publication lists, citation counts, authorship data, and external paper links.</div>
+                </div>
               </div>
             </div>
           </div>
@@ -42,4 +61,3 @@ export default function HomePage() {
     </>
   );
 }
-

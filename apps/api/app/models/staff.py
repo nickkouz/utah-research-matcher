@@ -19,6 +19,8 @@ class StaffRegistry(Base):
     title: Mapped[str | None] = mapped_column(Text)
     email: Mapped[str | None] = mapped_column(Text)
     profile_url: Mapped[str] = mapped_column(Text, nullable=False)
+    image_url: Mapped[str | None] = mapped_column(Text)
+    lab_url: Mapped[str | None] = mapped_column(Text)
     bio: Mapped[str | None] = mapped_column(Text)
     primary_school: Mapped[str | None] = mapped_column(Text)
     school_affiliations: Mapped[list[str]] = mapped_column(ARRAY(Text), default=list)
@@ -66,4 +68,3 @@ class StaffMatchProfile(Base):
 
 
 from app.models.paper import Paper  # noqa: E402
-
