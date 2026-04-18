@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 
-from sqlalchemy import desc, select
+from sqlalchemy import case, desc, func, select
 
 from workers.common.db import worker_session
 from workers.common.bootstrap import ensure_api_path
@@ -28,12 +28,20 @@ def main() -> None:
     args = parser.parse_args()
 
     with worker_session() as session:
+        paper_counts = (
+            select(Paper.staff_id.label("staff_id"), func.count(Paper.id).label("paper_count"))
+            .group_by(Paper.staff_id)
+            .subquery()
+        )
         stmt = (
-            select(StaffRegistry, StaffMatchProfile)
+            select(StaffRegistry, StaffMatchProfile, paper_counts.c.paper_count)
             .join(StaffMatchProfile, StaffRegistry.id == StaffMatchProfile.staff_id)
+            .outerjoin(paper_counts, paper_counts.c.staff_id == StaffRegistry.id)
             .where(StaffMatchProfile.openalex_author_id.is_not(None))
             .order_by(
+                desc(case((paper_counts.c.paper_count.is_(None), 1), else_=0)),
                 desc(StaffRegistry.eligible_for_matching),
+                paper_counts.c.paper_count.asc().nullslast(),
                 desc(StaffMatchProfile.publication_count),
                 desc(StaffMatchProfile.citation_count_total),
                 StaffRegistry.name.asc(),
@@ -48,7 +56,7 @@ def main() -> None:
 
         total_papers = 0
         failures = 0
-        for staff, profile in rows:
+        for staff, profile, _existing_paper_count in rows:
             try:
                 works = list_author_works(profile.openalex_author_id or "")
                 paper_records = build_paper_records(staff=staff, profile=profile, works=works)

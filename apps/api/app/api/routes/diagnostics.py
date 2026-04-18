@@ -18,9 +18,31 @@ def diagnostics_summary(db: Session = Depends(get_db)) -> DiagnosticsSummary:
     counts = {
         "staff_registry": int(db.execute(select(func.count(StaffRegistry.id))).scalar_one()),
         "staff_match_profiles": int(db.execute(select(func.count(StaffMatchProfile.staff_id))).scalar_one()),
+        "staff_with_publication_signal": int(
+            db.execute(
+                select(func.count(StaffRegistry.id)).where(StaffRegistry.has_publication_signal.is_(True))
+            ).scalar_one()
+        ),
         "eligible_staff": int(
             db.execute(
                 select(func.count(StaffRegistry.id)).where(StaffRegistry.eligible_for_matching.is_(True))
+            ).scalar_one()
+        ),
+        "openalex_resolved_profiles": int(
+            db.execute(
+                select(func.count(StaffMatchProfile.staff_id)).where(StaffMatchProfile.openalex_author_id.is_not(None))
+            ).scalar_one()
+        ),
+        "profiles_with_papers": int(db.execute(select(func.count(func.distinct(Paper.staff_id)))).scalar_one()),
+        "eligible_with_papers": int(
+            db.execute(
+                select(func.count(StaffRegistry.id))
+                .where(StaffRegistry.eligible_for_matching.is_(True))
+                .where(
+                    StaffRegistry.id.in_(
+                        select(func.distinct(Paper.staff_id))
+                    )
+                )
             ).scalar_one()
         ),
         "papers": int(db.execute(select(func.count(Paper.id))).scalar_one()),
@@ -39,6 +61,11 @@ def diagnostics_summary(db: Session = Depends(get_db)) -> DiagnosticsSummary:
         .group_by(StaffRegistry.primary_school)
         .order_by(func.count(StaffRegistry.id).desc())
         .limit(10)
+    ).all()
+    source_system_rows = db.execute(
+        select(StaffRegistry.source_system, func.count(StaffRegistry.id))
+        .group_by(StaffRegistry.source_system)
+        .order_by(func.count(StaffRegistry.id).desc())
     ).all()
     generic_eligible_profiles = int(
         db.execute(
@@ -60,6 +87,7 @@ def diagnostics_summary(db: Session = Depends(get_db)) -> DiagnosticsSummary:
         total_by_school=[_named_count(name, count) for name, count in total_by_school_rows],
         eligible_by_school=[_named_count(name, count) for name, count in eligible_by_school_rows],
         generic_eligible_profiles=generic_eligible_profiles,
+        source_system_counts=[_named_count(name, count) for name, count in source_system_rows],
     )
 
 

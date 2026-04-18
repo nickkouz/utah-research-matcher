@@ -13,3 +13,4 @@ class DiagnosticsSummary(BaseModel):
     total_by_school: list[NamedCount]
     eligible_by_school: list[NamedCount]
     generic_eligible_profiles: int
+    source_system_counts: list[NamedCount]

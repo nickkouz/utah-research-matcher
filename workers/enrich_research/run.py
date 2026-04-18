@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 
-from sqlalchemy import desc, select
+from sqlalchemy import case, desc, func, or_, select
 
 from workers.common.db import worker_session
 from workers.common.bootstrap import ensure_api_path
@@ -21,11 +21,45 @@ def main() -> None:
     args = parser.parse_args()
 
     with worker_session() as session:
+        paper_status = (
+            select(
+                Paper.staff_id.label("staff_id"),
+                func.count(Paper.id).label("paper_count"),
+                func.sum(
+                    case(
+                        (or_(Paper.ai_summary.is_(None), Paper.ai_summary == ""), 1),
+                        else_=0,
+                    )
+                ).label("missing_paper_summaries"),
+            )
+            .group_by(Paper.staff_id)
+            .subquery()
+        )
         rows = session.execute(
-            select(StaffRegistry, StaffMatchProfile)
+            select(
+                StaffRegistry,
+                StaffMatchProfile,
+                paper_status.c.paper_count,
+                paper_status.c.missing_paper_summaries,
+            )
             .join(StaffMatchProfile, StaffRegistry.id == StaffMatchProfile.staff_id)
+            .outerjoin(paper_status, paper_status.c.staff_id == StaffRegistry.id)
             .where(StaffRegistry.eligible_for_matching.is_(True))
             .order_by(
+                desc(
+                    case(
+                        (
+                            or_(
+                                StaffMatchProfile.ai_research_summary.is_(None),
+                                StaffMatchProfile.ai_research_summary == "",
+                                StaffMatchProfile.ai_research_summary.ilike("%biography and contact information%"),
+                            ),
+                            1,
+                        ),
+                        else_=0,
+                    )
+                ),
+                desc(func.coalesce(paper_status.c.missing_paper_summaries, 0)),
                 desc(StaffMatchProfile.publication_count),
                 desc(StaffMatchProfile.citation_count_total),
                 StaffRegistry.name.asc(),
@@ -35,7 +69,7 @@ def main() -> None:
             rows = rows[: args.limit]
 
         failures = 0
-        for staff, profile in rows:
+        for staff, profile, _paper_count, _missing_summaries in rows:
             try:
                 papers = session.execute(
                     select(Paper).where(Paper.staff_id == staff.id).order_by(Paper.year.desc().nullslast())

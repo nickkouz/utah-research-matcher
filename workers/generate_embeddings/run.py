@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import argparse
 
-from sqlalchemy import desc, select
+from sqlalchemy import case, desc, func, or_, select
 
 from workers.common.db import worker_session
 from workers.common.bootstrap import ensure_api_path
@@ -23,11 +23,39 @@ def main() -> None:
     args = parser.parse_args()
 
     with worker_session() as session:
+        paper_status = (
+            select(
+                Paper.staff_id.label("staff_id"),
+                func.sum(
+                    case((Paper.embedding_paper.is_(None), 1), else_=0)
+                ).label("missing_paper_embeddings"),
+            )
+            .group_by(Paper.staff_id)
+            .subquery()
+        )
         rows = session.execute(
-            select(StaffRegistry, StaffMatchProfile)
+            select(
+                StaffRegistry,
+                StaffMatchProfile,
+                paper_status.c.missing_paper_embeddings,
+            )
             .join(StaffMatchProfile, StaffRegistry.id == StaffMatchProfile.staff_id)
+            .outerjoin(paper_status, paper_status.c.staff_id == StaffRegistry.id)
             .where(StaffRegistry.eligible_for_matching.is_(True))
             .order_by(
+                desc(
+                    case(
+                        (
+                            or_(
+                                StaffMatchProfile.embedding_summary.is_(None),
+                                StaffMatchProfile.embedding_research.is_(None),
+                            ),
+                            1,
+                        ),
+                        else_=0,
+                    )
+                ),
+                desc(func.coalesce(paper_status.c.missing_paper_embeddings, 0)),
                 desc(StaffMatchProfile.publication_count),
                 desc(StaffMatchProfile.citation_count_total),
                 StaffRegistry.name.asc(),
@@ -37,7 +65,7 @@ def main() -> None:
             rows = rows[: args.limit]
 
         failures = 0
-        for staff, profile in rows:
+        for staff, profile, _missing_paper_embeddings in rows:
             try:
                 with session.begin_nested():
                     papers = session.execute(

@@ -192,6 +192,35 @@ powershell -ExecutionPolicy Bypass -File .\infra\scripts\setup-api-env.ps1
 powershell -ExecutionPolicy Bypass -File .\infra\scripts\run-data-backfill.ps1 -ResolveLimit 250 -PaperLimit 250 -EnrichLimit 50 -EmbeddingLimit 250 -RefreshOpenAlex
 ```
 
+To backfill a production database such as Railway Postgres from your machine, pass the target database URL explicitly and run multiple passes:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\infra\scripts\run-data-backfill.ps1 `
+  -DatabaseUrl "postgresql+psycopg://USER:PASSWORD@HOST:PORT/DBNAME" `
+  -Passes 4 `
+  -ResolveLimit 500 `
+  -PaperLimit 500 `
+  -EnrichLimit 100 `
+  -EmbeddingLimit 500 `
+  -RefreshOpenAlex
+```
+
+After each pass, the script prints a database snapshot so you can watch:
+
+- `staff_registry`
+- `staff_match_profiles`
+- `staff_with_publication_signal`
+- `openalex_resolved_profiles`
+- `profiles_with_papers`
+- `papers`
+- `paper_authors`
+
+When the database is filled correctly:
+
+- `/researchers` should show multiple schools without requiring a company search
+- `/diagnostics/summary` should show broad school coverage
+- company search should stop collapsing onto a tiny subset of faculty
+
 That sequence will:
 
 1. pull people from `profiles.faculty.utah.edu` into `staff_registry`
