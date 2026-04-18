@@ -23,6 +23,108 @@ GENERIC_PROFILE_PHRASES = (
     "contact information for",
     "learn more at",
 )
+SECTOR_DOMAIN_RULES = {
+    "Biotechnology": {
+        "preferred_schools": {
+            "spencer fox eccles school of medicine",
+            "university of utah health",
+            "college of pharmacy",
+            "college of science",
+            "price college of engineering",
+            "college of engineering",
+        },
+        "preferred_keywords": {
+            "biology",
+            "biological",
+            "biomedical",
+            "bioinformatics",
+            "biostatistics",
+            "biochemistry",
+            "genetics",
+            "genomics",
+            "drug",
+            "pharma",
+            "pharmac",
+            "clinical",
+            "medicine",
+            "medical",
+            "cell",
+            "molecular",
+            "cancer",
+            "chemical engineering",
+            "chemistry",
+            "materials",
+            "neuroscience",
+            "health",
+        },
+        "penalty_keywords": {
+            "marketing",
+            "management",
+            "finance",
+            "accounting",
+            "economics",
+            "entrepreneurship",
+            "operations and information systems",
+        },
+    },
+    "Healthcare Technology": {
+        "preferred_schools": {
+            "spencer fox eccles school of medicine",
+            "university of utah health",
+            "college of pharmacy",
+            "college of science",
+            "price college of engineering",
+            "college of engineering",
+        },
+        "preferred_keywords": {
+            "clinical",
+            "health",
+            "medical",
+            "medicine",
+            "informatics",
+            "biomedical",
+            "computer",
+            "machine learning",
+            "artificial intelligence",
+            "data science",
+            "signal processing",
+            "imaging",
+        },
+        "penalty_keywords": {
+            "marketing",
+            "management",
+            "finance",
+            "accounting",
+            "economics",
+        },
+    },
+    "Computing and AI": {
+        "preferred_schools": {
+            "college of science",
+            "price college of engineering",
+            "college of engineering",
+        },
+        "preferred_keywords": {
+            "computer",
+            "computing",
+            "software",
+            "machine learning",
+            "artificial intelligence",
+            "data science",
+            "robotics",
+            "electrical",
+            "signal processing",
+            "cyber",
+            "algorithm",
+        },
+        "penalty_keywords": {
+            "marketing",
+            "management",
+            "finance",
+            "accounting",
+        },
+    },
+}
 
 
 def match_company_to_staff(
@@ -139,16 +241,18 @@ def _score_candidate(
     publication_support = _publication_support(profile)
     eligibility_support = 1.0 if is_primary_candidate else 0.65
     profile_quality = _profile_quality(profile)
+    domain_signal = _domain_signal(company, staff, profile)
     return (
-        (summary_similarity * 0.40)
-        + (research_similarity * 0.25)
+        (summary_similarity * 0.34)
+        + (research_similarity * 0.23)
         + (sector_overlap * 0.12)
         + (theme_overlap * 0.08)
         + (recency * 0.05)
-        + (school_support * 0.03)
+        + (school_support * 0.05)
         + (publication_support * 0.04)
         + (eligibility_support * 0.03)
         + (profile_quality * 0.03)
+        + (domain_signal * 0.10)
     )
 
 
@@ -210,6 +314,46 @@ def _profile_quality(profile: StaffMatchProfile) -> float:
     if word_count < 12:
         return 0.3
     return 1.0
+
+
+def _domain_signal(
+    company: CompanyInterpretation,
+    staff: StaffRegistry,
+    profile: StaffMatchProfile,
+) -> float:
+    rules = SECTOR_DOMAIN_RULES.get(company.primary_sector)
+    if not rules:
+        return 0.5
+
+    school_values = {
+        item.strip().lower()
+        for item in (staff.school_affiliations or [])
+        if item and item.strip()
+    }
+    if staff.primary_school and staff.primary_school.strip():
+        school_values.add(staff.primary_school.strip().lower())
+
+    text_parts = [
+        staff.department or "",
+        staff.title or "",
+        profile.ai_research_summary or "",
+        " ".join(profile.research_keywords or []),
+        " ".join(profile.technical_tags or []),
+        " ".join(profile.sector_tags or []),
+    ]
+    text_blob = " ".join(text_parts).lower()
+
+    school_match = any(school in school_values for school in rules["preferred_schools"])
+    keyword_match = any(keyword in text_blob for keyword in rules["preferred_keywords"])
+    penalty_match = any(keyword in text_blob for keyword in rules["penalty_keywords"])
+
+    if school_match and keyword_match:
+        return 1.0
+    if school_match or keyword_match:
+        return 0.8
+    if penalty_match:
+        return 0.0
+    return 0.4
 
 
 def _collaborators(db: Session, staff_id: str) -> list[CollaboratorSummary]:
