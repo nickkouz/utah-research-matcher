@@ -250,6 +250,17 @@ To run it automatically in GitHub Actions, add these repository secrets:
 - `OPENALEX_API_KEY`
 - `OPENALEX_CONTACT_EMAIL`
 
+GitHub path:
+
+- `GitHub repo -> Settings -> Secrets and variables -> Actions -> New repository secret`
+
+Railway path for runtime service variables:
+
+- `Railway project -> utah-research-matcher API service -> Variables`
+- `Railway project -> Postgres service -> Variables` for the production `DATABASE_URL`
+
+Do not commit production secrets into repo files. If you keep a local production-style env file for your own machine, use a name like `.env.production.local` or `.env.railway`; the repo now ignores those patterns.
+
 The workflow runs every Monday and can also be triggered manually with `workflow_dispatch`.
 
 That sequence will:
