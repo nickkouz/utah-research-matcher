@@ -40,7 +40,14 @@ Recommended first path: Railway for the API plus a pgvector-enabled Postgres ser
 3. Add a second service from your GitHub repo:
    - repo: `nickkouz/utah-research-matcher`
    - root directory: `apps/api`
-4. In the API service settings, set the build and start commands to:
+4. The API service now includes `apps/api/railway.toml`, which defines the Railway build/start/healthcheck config in code.
+5. In Railway, either let that file be auto-detected or explicitly set the Config as Code path to:
+
+```text
+/apps/api/railway.toml
+```
+
+6. If you want to keep the settings in the dashboard instead, set the build and start commands to:
 
 ```text
 Build Command: pip install -r requirements.txt
@@ -50,7 +57,7 @@ Start Command: python main.py
 If Railway auto-detects Python correctly, the committed `apps/api/requirements.txt` should also allow the service to install dependencies without a custom build command. Setting the build command explicitly is still the safest option.
 
 The repo now includes `apps/api/main.py`, which runs Alembic migrations on startup and then starts Uvicorn on Railway's assigned `PORT`.
-5. In the API service variables, set:
+7. In the API service variables, set:
    - `OPENAI_API_KEY`
    - `OPENAI_GENERATION_MODEL=gpt-5-mini`
    - `OPENAI_EMBEDDING_MODEL=text-embedding-3-small`
@@ -59,12 +66,12 @@ The repo now includes `apps/api/main.py`, which runs Alembic migrations on start
    - `PROFILES_BASE_URL=https://profiles.faculty.utah.edu`
    - `PROFILES_SEED_URLS=https://profiles.faculty.utah.edu`
    - `CORS_ALLOWED_ORIGINS=https://YOUR-VERCEL-DOMAIN`
-6. Set `DATABASE_URL` on the API service to the connection string from the pgvector Postgres service.
-7. Generate a public domain for the API service in Railway networking.
-8. Copy that public API URL into the Vercel frontend env vars:
+8. Set `DATABASE_URL` on the API service to the connection string from the pgvector Postgres service.
+9. Generate a public domain for the API service in Railway networking.
+10. Copy that public API URL into the Vercel frontend env vars:
    - `NEXT_PUBLIC_API_BASE_URL=https://YOUR-RAILWAY-API-DOMAIN`
    - `API_BASE_URL=https://YOUR-RAILWAY-API-DOMAIN`
-9. Redeploy the Vercel frontend after the env vars are updated.
+11. Redeploy the Vercel frontend after the env vars are updated.
 
 Backend environment variables:
 
